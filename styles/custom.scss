@@ -1,0 +1,15 @@
+$primary: #5e50a1;
+@import "~bootstrap/scss/bootstrap";
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+
+$spacers: map-merge(
+  $spacers,
+  (
+    6: 4rem,
+    7: 5rem,
+    8: 6rem,
+    9: 7rem,
+    10: 8rem,
+  )
+);

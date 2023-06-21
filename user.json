@@ -1,0 +1,212 @@
+[
+  {
+    "name": "Louis Tomlinson",
+    "job": "Web Developer",
+    "skill": ["JavaScript", "HTML", "CSS"],
+    "location": "New York",
+    "photo": "ava1.png"
+  },
+  {
+    "name": "Harry Styles",
+    "job": "Designer",
+    "skill": ["Photoshop", "Corel draw", "Figma"],
+    "location": "Los Angeles",
+    "photo": "ava2.png"
+  },
+  {
+    "name": "Niall Horan",
+    "job": "Web Developer",
+    "skill": ["JavaScript", "HTML", "CSS", "node.js"],
+    "location": "Chicago",
+    "photo": "ava3.png"
+  },
+  {
+    "name": "Liam Payne",
+    "job": "Programmer",
+    "skill": ["Python", "Machine Learning", "Data Science"],
+    "location": "San Francisco",
+    "photo": "ava4.png"
+  },
+  {
+    "name": "Joe Doe",
+    "job": "Game Developer",
+    "skill": ["Unity", "Unreal Engine"],
+    "location": "Boston",
+    "photo": "ava1.png"
+  },
+  {
+    "name": "Jim Doe",
+    "job": "Web Developer",
+    "skill": ["HTML", "CSS"],
+    "location": "Chicago",
+    "photo": "ava3.png"
+  },
+  {
+    "name": "Jill Doe",
+    "job": "Manager",
+    "skill": "Leadership",
+    "location": "San Francisco",
+    "photo": "ava4.png"
+  },
+  {
+    "name": "Joe Doe",
+    "job": "Tester",
+    "skill": "Automation",
+    "location": "Boston",
+    "photo": "ava1.png"
+  },
+  {
+    "name": "Joe Doe",
+    "job": "Tester",
+    "skill": "Automation",
+    "location": "Boston",
+    "photo": "ava1.png"
+  },
+  {
+    "name": "Joe Doe",
+    "job": "Tester",
+    "skill": "Automation",
+    "location": "Boston",
+    "photo": "ava1.png"
+  },
+  {
+    "name": "Jim Doe",
+    "job": "Web Developer",
+    "skill": ["HTML", "CSS"],
+    "location": "Chicago",
+    "photo": "ava3.png"
+  },
+  {
+    "name": "Jill Doe",
+    "job": "Manager",
+    "skill": "Leadership",
+    "location": "San Francisco",
+    "photo": "ava4.png"
+  },
+  {
+    "name": "Joe Doe",
+    "job": "Tester",
+    "skill": "Automation",
+    "location": "Boston",
+    "photo": "ava1.png"
+  },
+  {
+    "name": "Joe Doe",
+    "job": "Tester",
+    "skill": "Automation",
+    "location": "Boston",
+    "photo": "ava1.png"
+  },
+  {
+    "name": "Joe Doe",
+    "job": "Tester",
+    "skill": "Automation",
+    "location": "Boston",
+    "photo": "ava1.png"
+  },
+  {
+    "name": "Joe Doe",
+    "job": "Tester",
+    "skill": "Automation",
+    "location": "Boston",
+    "photo": "ava1.png"
+  },
+  {
+    "name": "Joe Doe",
+    "job": "Tester",
+    "skill": "Automation",
+    "location": "Boston",
+    "photo": "ava1.png"
+  },
+  {
+    "name": "Joe Doe",
+    "job": "Tester",
+    "skill": "Automation",
+    "location": "Boston",
+    "photo": "ava1.png"
+  },
+  {
+    "name": "Jim Doe",
+    "job": "Web Developer",
+    "skill": ["HTML", "CSS"],
+    "location": "Chicago",
+    "photo": "ava3.png"
+  },
+  {
+    "name": "Jill Doe",
+    "job": "Manager",
+    "skill": "Leadership",
+    "location": "San Francisco",
+    "photo": "ava4.png"
+  },
+  {
+    "name": "Joe Doe",
+    "job": "Tester",
+    "skill": "Automation",
+    "location": "Boston",
+    "photo": "ava1.png"
+  },
+  {
+    "name": "Joe Doe",
+    "job": "Tester",
+    "skill": "Automation",
+    "location": "Boston",
+    "photo": "ava1.png"
+  },
+  {
+    "name": "Joe Doe",
+    "job": "Tester",
+    "skill": "Automation",
+    "location": "Boston",
+    "photo": "ava1.png"
+  },
+  {
+    "name": "Joe Doe",
+    "job": "Tester",
+    "skill": "Automation",
+    "location": "Boston",
+    "photo": "ava1.png"
+  },
+  {
+    "name": "Joe Doe",
+    "job": "Tester",
+    "skill": "Automation",
+    "location": "Boston",
+    "photo": "ava1.png"
+  },
+  {
+    "name": "Jim Doe",
+    "job": "Web Developer",
+    "skill": ["HTML", "CSS"],
+    "location": "Chicago",
+    "photo": "ava3.png"
+  },
+  {
+    "name": "Jill Doe",
+    "job": "Manager",
+    "skill": "Leadership",
+    "location": "San Francisco",
+    "photo": "ava4.png"
+  },
+  {
+    "name": "Joe Doe",
+    "job": "Tester",
+    "skill": "Automation",
+    "location": "Boston",
+    "photo": "ava1.png"
+  },
+  {
+    "name": "Joe Doe",
+    "job": "Tester",
+    "skill": "Automation",
+    "location": "Boston",
+    "photo": "ava1.png"
+  },
+  {
+    "name": "Joe Doe",
+    "job": "Tester",
+    "skill": "Automation",
+    "location": "Boston",
+    "photo": "ava1.png"
+  }
+]
