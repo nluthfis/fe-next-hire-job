@@ -30,12 +30,12 @@ export default function Home() {
               <button className="btn btn-primary btn-lg w-50 ms-5 mb-2">
                 Mulai Dari Sekarang
               </button>
-              <button
+              {/* <button
                 className="btn btn-primary btn-lg"
                 onClick={handleCounter}
               >
                 Counter : {state.counterSlice.value}
-              </button>
+              </button> */}
             </div>
 
             <div className="col-md-6 col-lg-6 col-sm-12 col-xs-12 order-1 order-md-2">
