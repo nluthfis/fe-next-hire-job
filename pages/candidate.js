@@ -44,13 +44,13 @@ function Job_list() {
       <nav className="navbar navbar-expand-lg navbar-primary bg-primary">
         <div className="container">
           <a className="navbar-brand fs-4 text-light fw-bold ms-3" href="#">
-            candidate
+            Candidate
           </a>
         </div>
       </nav>
       <div className="container ">
         <div className="row ">
-          <div className="col-12 mt-5 ">
+          <div className="col-md-12 col-lg-12 col-sm-12 col-xs-12 mt-5 ">
             <div className="search mb-5">
               <input
                 type="text"
@@ -141,25 +141,25 @@ function Job_list() {
               </div>
             </div>
             <div className="card shadow-lg">
-              <div>
+              <div className="row flex-column flex-md-row justify-content-center align-items-center text-center text-md-start gap-3">
                 {currentProfiles.map((profile, index) => (
                   <div key={index} className="row align-items-center">
-                    <div className="col-md-1 col-lg-1 col-xs-12 col-sm-12 ms-3">
+                    <div className="col col-md-2 text-center">
                       <img
                         src={profile.photo}
                         alt={profile.name}
                         className="img-fluid"
                       />
                     </div>
-                    <div className=" card-body col-7 ms-4 me-5 ">
-                      <h5 className="m-0 ">{profile.name}</h5>
+                    <div className="card-body col col-md-8">
+                      <h5>{profile.name}</h5>
                       <p className="m-0 text-secondary">{profile.job}</p>
-                      <div className="d-flex align-items-center">
+                      <div className="d-flex align-items-center justify-content-md-start justify-content-center text-md-start ">
                         <img className="me-1" src="map-pin.png" />
                         <p className="m-0 text-secondary">{profile.location}</p>
                       </div>
 
-                      <div className="m-0">
+                      <div className="d-inline">
                         {Array.isArray(profile.skill) ? (
                           profile.skill.map((item, key) => (
                             <span
@@ -176,7 +176,7 @@ function Job_list() {
                         )}
                       </div>
                     </div>
-                    <div className="col-md-2 col-lg-2 col-xs-11 col-sm-11 ms-5">
+                    <div className="col col-md-2">
                       <Link href="/profile">
                         <button className="btn btn-primary">
                           Lihat Profile

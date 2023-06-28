@@ -2,6 +2,7 @@ import React from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 function Find_job() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -38,13 +39,20 @@ function Find_job() {
   return (
     <div>
       <Navbar />
-
+      <nav className="navbar navbar-expand-lg navbar-primary bg-primary">
+        <div className="container">
+          <a className="navbar-brand fs-4 text-light fw-bold ms-3" href="#">
+            Jobs
+          </a>
+        </div>
+      </nav>
       <div className="container">
         <div className="card mt-5 mb-5">
           <div className="card-body">
             <div className="container">
               <div className="row">
-                <div className="col-3 shadow-lg">
+                <hr className="border border-top border-primary border-5 mb-0" />
+                <div className="col-4">
                   {currentJobs.map((job, index) => (
                     <div
                       key={index}
@@ -54,14 +62,28 @@ function Find_job() {
                       onClick={() => handleJobClick(job)}
                       style={{ cursor: "pointer" }}
                     >
-                      <div className="ms-3">
-                        <p>{job.job_name}</p>
-                        <p>{job.company_name}</p>
-                        <p>{job.location}</p>
-                      </div>
                       <hr />
+                      <div className=" mt-0 d-flex">
+                        <div>
+                          <Image
+                            className="me-3"
+                            src={job.logo}
+                            alt="Job Logo"
+                            width={80}
+                            height={80}
+                          />
+                        </div>
+                        <div>
+                          <h6>{job.job_name}</h6>
+                          <p className="text-secondary mt-0">
+                            {job.company_name}
+                          </p>
+                          <p className="text-secondary mt-0">{job.location}</p>
+                        </div>
+                      </div>
                     </div>
                   ))}
+
                   <div>
                     {pageNumbers.map((number) => (
                       <button
@@ -76,10 +98,32 @@ function Find_job() {
                   </div>
                 </div>
                 {selectedJob && (
-                  <div className="col-9 shadow-lg" style={{ top: `-1` }}>
-                    <h3 className="ms-5 mt-3">{selectedJob.job_name}</h3>
-                    <h5 className="ms-5 mt-3">{selectedJob.company_name}</h5>
-                    <h5 className="ms-5 mt-3">{selectedJob.location}</h5>
+                  <div
+                    className="col-8 border-start card-right"
+                    style={{
+                      boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+                    }}
+                  >
+                    <div className="shadow"></div>
+                    <div className=" mt-0 d-flex">
+                      <div>
+                        <Image
+                          className="me-3"
+                          src={selectedJob.logo}
+                          alt="Job Logo"
+                          width={80}
+                          height={80}
+                        />
+                      </div>
+                      <div>
+                        <h3 className="ms-5 mt-3">{selectedJob.job_name}</h3>
+                        <h5 className="ms-5 mt-3">
+                          {selectedJob.company_name}
+                        </h5>
+                        <h5 className="ms-5 mt-3">{selectedJob.location}</h5>
+                      </div>
+                    </div>
+
                     <p className="ms-5 mt-3">Full-time · Entry level</p>
                     <p className="ms-5 mt-3">
                       1,001-5,000 employees · IT Services and IT Consulting

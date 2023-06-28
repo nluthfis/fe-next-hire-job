@@ -3,30 +3,70 @@
     "job_name": "Back End Developer",
     "company_name": "Company1",
     "location": "jakarta",
-    "description": "this is job description number1"
+    "description": "this is job description number1",
+    "logo": "/job1.jfif"
   },
   {
     "job_name": "Back End Developer",
     "company_name": "Company2",
     "location": "jakarta",
-    "description": "this is job description number2"
+    "description": "this is job description number2",
+    "logo": "/job2.jfif"
   },
   {
     "job_name": "Back End Developer",
     "company_name": "Company3",
     "location": "jakarta",
-    "description": "this is job description number3"
+    "description": "this is job description number3",
+    "logo": "/job3.jfif"
   },
   {
     "job_name": "Back End Developer",
     "company_name": "Company4",
     "location": "jakarta",
-    "description": "this is job description number4"
+    "description": "this is job description number4",
+    "logo": "/job4.jfif"
   },
   {
     "job_name": "Back End Developer",
     "company_name": "Company5",
     "location": "jakarta",
-    "description": "this is job description number5"
+    "description": "this is job description number5",
+    "logo": "/job5.jfif"
+  },
+  {
+    "job_name": "Back End Developer",
+    "company_name": "Company1",
+    "location": "jakarta",
+    "description": "this is job description number1",
+    "logo": "/job1.jfif"
+  },
+  {
+    "job_name": "Back End Developer",
+    "company_name": "Company2",
+    "location": "jakarta",
+    "description": "this is job description number2",
+    "logo": "/job2.jfif"
+  },
+  {
+    "job_name": "Back End Developer",
+    "company_name": "Company3",
+    "location": "jakarta",
+    "description": "this is job description number3",
+    "logo": "/job3.jfif"
+  },
+  {
+    "job_name": "Back End Developer",
+    "company_name": "Company4",
+    "location": "jakarta",
+    "description": "this is job description number4",
+    "logo": "/job4.jfif"
+  },
+  {
+    "job_name": "Back End Developer",
+    "company_name": "Company5",
+    "location": "jakarta",
+    "description": "this is job description number5",
+    "logo": "/job5.jfif"
   }
 ]

@@ -2,33 +2,43 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setEmail,
+  setPassword,
+  setErrMsg,
+  setToken,
+} from "../store/reducers/authSlice";
+import { setUser } from "../store/reducers/userSlice";
+import { useState } from "react";
 function Login() {
   const router = useRouter();
-
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [errMsg, setErrMsg] = React.useState(null);
+  const dispatch = useDispatch();
+  const { errMsg } = useSelector((state) => state.auth);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = (event) => {
     event.preventDefault();
-
+    setIsLoading(true);
     axios
-      .post("/api/login", { email, password })
+      .post(`${process.env.NEXT_PUBLIC_APP_BASE_URL}/auth/login`, {
+        email,
+        password,
+      })
       .then((response) => {
-        const token = response?.data?.token;
-
-        localStorage.setItem("token", token);
-
-        if (token === "123") {
-          router.replace("/");
-        } else if (token === "456") {
-          router.replace("/");
-        } else {
-          setErrMsg("Invalid token");
-        }
+        const { token, user } = response?.data?.data;
+        dispatch(setToken(token));
+        dispatch(setUser(user));
+        localStorage.setItem("auth", token);
+        router.push("/profile");
       })
       .catch(({ response }) => {
-        setErrMsg(response?.data?.message ?? "Something wrong on our server");
+        dispatch(setErrMsg(response?.data?.message ?? "Wrong Email/Password"));
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -59,7 +69,7 @@ function Login() {
                 euismod ipsum et dui rhoncus auctor.
               </p>
               {errMsg ? (
-                <div class="alert alert-danger ms-5" role="alert">
+                <div className="alert alert-danger ms-5" role="alert">
                   {errMsg}
                 </div>
               ) : null}
@@ -94,21 +104,25 @@ function Login() {
                 </div>
 
                 <div className="m-5 mt-2 mb-3 d-grid">
-                  <button type="submit" className="btn btn-warning btn-lg">
-                    Masuk
+                  <button
+                    disabled={isLoading}
+                    type="submit"
+                    className="btn btn-warning btn-lg"
+                  >
+                    {isLoading ? "Loading..." : "Masuk"}
                   </button>
                 </div>
-
-                <p className="text-center mt-3">
-                  Anda belum punya akun?{" "}
-                  <Link
-                    href="/register"
-                    className="text-decoration-none text-warning"
-                  >
-                    Daftar disini
-                  </Link>
-                </p>
               </form>
+
+              <p className="text-center mt-3">
+                Anda belum punya akun?{" "}
+                <Link
+                  href="/register"
+                  className="text-decoration-none text-warning"
+                >
+                  Daftar disini
+                </Link>
+              </p>
             </div>
           </div>
         </div>

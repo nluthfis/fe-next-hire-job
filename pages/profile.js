@@ -1,19 +1,22 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+
+import { useSelector } from "react-redux";
 
 function Profile() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState("portofolio");
-  const [token, setToken] = useState(null);
+  const router = useRouter();
+  const user = useSelector((state) => state.user);
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    setIsAuthenticated(!!storedToken);
-    setToken(storedToken);
-  }, []);
+    const storedToken = localStorage.getItem("auth");
+    if (!storedToken) {
+      router.push("/login");
+    }
+  }, [router]);
   let company = [...new Array(2)];
   return (
     <div>
@@ -21,115 +24,92 @@ function Profile() {
       <div className="container mt-5 mb-5">
         <div className="row">
           <div className="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-            <div className="card">
-              <img
-                src="/pp2.jpg"
-                className="rounded-circle mx-auto d-block mt-3"
-                width={`100`}
-                height={`100`}
-                alt="card"
-              />
-              <div className="card-body">
-                <h5 className="card-title">Louis Tomlinson</h5>
-                <p className="card-text">web developer</p>
-                <div className="card-location mb-0 d-flex">
-                  <img
-                    className="me-2"
-                    src="/map-pin.png"
-                    width={`20`}
-                    height={`20`}
-                  />
-                  <p className="text-muted">Purwokerto, Jawa Tengah</p>
-                </div>
+            {user && user.data && user.data.photo && (
+              <div className="card">
+                <img
+                  src={user?.data?.photo}
+                  className="rounded-circle mx-auto d-block mt-3"
+                  width={`100`}
+                  height={`100`}
+                  alt="card"
+                />
+                <div className="card-body">
+                  <h5 className="card-title">{user?.data?.fullname}</h5>
+                  <p className="card-text">{user?.data?.company}</p>
+                  <div className="card-location mb-0 d-flex">
+                    <img
+                      className="me-2"
+                      src="/map-pin.png"
+                      width={`20`}
+                      height={`20`}
+                    />
+                    <p className="text-muted">{user?.data?.domicile}</p>
+                  </div>
 
-                <p className="text-muted mb-2">Freelancer</p>
-                <p className="text-muted mb-0">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Vestibulum erat orci, mollis nec gravida sed, ornare quis
-                  urna. Curabitur eu lacus fringilla, vestibulum risus at.
-                </p>
-              </div>
-              {isAuthenticated && (
-                <div className="d-flex justify-content-center">
-                  {token === "123" && (
+                  <p className="text-muted mb-2">{user?.data?.job_title}</p>
+                  <p className="text-muted mb-0">{user?.data?.description}</p>
+                </div>
+                <div className="d-grid gap-2 col">
+                  <div className="w-100">
                     <Link href="/edit_profile">
                       <button
-                        className="btn btn-primary "
-                        style={{ width: "100%" }}
+                        className="btn btn-primary mx-3"
+                        style={{ width: "calc(100% - 2rem)" }}
                       >
                         Edit profile
                       </button>
                     </Link>
-                  )}
-                  {token === "456" && (
-                    <Link href="/hire">
-                      <button className="btn btn-primary">Hire</button>
-                    </Link>
-                  )}
+                  </div>
                 </div>
-              )}
 
-              <h5 className="card-title ms-3 mt-5">Skills</h5>
-              <div className="card-skills ms-2 ">
-                <div className="d-inline ">
-                  {[
-                    "Phyton",
-                    "Laravel",
-                    "Golang",
-                    "Javascript",
-                    "Php",
-                    "Html",
-                    "C++",
-                    "Kotlin",
-                    "Swift",
-                    "Ruby",
-                    "Rust",
-                    "Javascript",
-                    "Express",
-                  ].map((item, key) => (
-                    <span key={key} class="badge bg-warning m-1 p-2 ">
-                      {item}
-                    </span>
-                  ))}
+                <h5 className="card-title ms-3 mt-5">Skills</h5>
+                <div className="card-skills ms-2 ">
+                  <div className="d-inline ">
+                    {user?.data?.skills.map((item, key) => (
+                      <span key={key} className="badge bg-warning m-1 p-2">
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="card-location mb-0 ms-3 mt-5 d-flex">
+                  <img
+                    className="me-2"
+                    src="/mail.png"
+                    width={`20`}
+                    height={`20`}
+                  />
+                  <p className="text-muted">{user?.data?.email}</p>
+                </div>
+                <div className="card-location mb-0 ms-3 d-flex">
+                  <img
+                    className="me-2"
+                    src="/instagram.png"
+                    width={`20`}
+                    height={`20`}
+                  />
+                  <p className="text-muted">@Louist91</p>
+                </div>
+                <div className="card-location mb-0 ms-3 d-flex">
+                  <img
+                    className="me-2"
+                    src="/github.png"
+                    width={`20`}
+                    height={`20`}
+                  />
+                  <p className="text-muted">@Louistommo</p>
+                </div>
+                <div className="card-location mb-5 ms-3 d-flex">
+                  <img
+                    className="me-2"
+                    src="/gitlab.png"
+                    width={`20`}
+                    height={`20`}
+                  />
+                  <p className="text-muted">@Louistommo91</p>
                 </div>
               </div>
-              <div className="card-location mb-0 ms-3 mt-5 d-flex">
-                <img
-                  className="me-2"
-                  src="/mail.png"
-                  width={`20`}
-                  height={`20`}
-                />
-                <p className="text-muted">Louistommo@gmail.com</p>
-              </div>
-              <div className="card-location mb-0 ms-3 d-flex">
-                <img
-                  className="me-2"
-                  src="/instagram.png"
-                  width={`20`}
-                  height={`20`}
-                />
-                <p className="text-muted">@Louist91</p>
-              </div>
-              <div className="card-location mb-0 ms-3 d-flex">
-                <img
-                  className="me-2"
-                  src="/github.png"
-                  width={`20`}
-                  height={`20`}
-                />
-                <p className="text-muted">@Louistommo</p>
-              </div>
-              <div className="card-location mb-5 ms-3 d-flex">
-                <img
-                  className="me-2"
-                  src="/gitlab.png"
-                  width={`20`}
-                  height={`20`}
-                />
-                <p className="text-muted">@Louistommo91</p>
-              </div>
-            </div>
+            )}
           </div>
           <div className="col-md-9 col-lg-9 col-xs-12 col-sm-12 ">
             <div className="card">

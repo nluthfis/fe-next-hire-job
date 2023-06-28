@@ -2,10 +2,13 @@ import "bootstrap/dist/css/bootstrap.css";
 import "../styles/custom.scss";
 import "../styles/index.scss";
 import "../styles/candidate.scss";
+import "../styles/navbar.scss";
+import "../styles/find_job.scss";
 
 import { Provider } from "react-redux";
-import { store } from "@/store";
+import { store, persistor } from "@/store";
 import Script from "next/script";
+import { PersistGate } from "redux-persist/integration/react";
 
 export default function App({ Component, pageProps }) {
   return (
@@ -29,7 +32,9 @@ export default function App({ Component, pageProps }) {
         }}
       />
       <Provider store={store}>
-        <Component {...pageProps} />
+        <PersistGate Loading={null} persistor={persistor}>
+          <Component {...pageProps} />
+        </PersistGate>
       </Provider>
     </>
   );

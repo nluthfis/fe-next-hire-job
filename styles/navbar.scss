@@ -1,0 +1,11 @@
+.dropdown-menu-right {
+  position: absolute;
+  top: 100%; /* position it right below the avatar image */
+  right: 0; /* align it to the right side of the avatar image */
+  width: 200px; /* adjust as needed */
+}
+@media (max-width: 768px) {
+  .dropdown-menu-right {
+    width: 100%; /* adjust as needed */
+  }
+}
