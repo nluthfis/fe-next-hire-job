@@ -9,6 +9,7 @@ import Link from "next/link";
 import { setUser } from "../store/reducers/userSlice";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import Select from "react-select";
 
 function Edit_profile() {
   const router = useRouter();
@@ -23,17 +24,6 @@ function Edit_profile() {
     description: "",
     domicile: "",
   });
-
-  console.log(formState);
-
-  //input skills
-  const [valueSkills, setValueSkills] = useState([]);
-  const onChangeSkills = (event) => {
-    setValueSkills(event.target.value);
-  };
-  const onSearch = (searchTerm) => {
-    console.log("seacrh", searchTerm);
-  };
 
   //handle change edit biodata
   const handleChange = (event) => {
@@ -60,17 +50,23 @@ function Edit_profile() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
-    const token = localStorage.getItem("auth");
-
     try {
-      const response = await axios.patch(
+      await axios.patch(
         `${process.env.NEXT_PUBLIC_APP_BASE_URL}/profile`,
         formState,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${localStorage.getItem("auth")}` },
         }
       );
-      dispatch(setUser(response.data));
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_APP_BASE_URL}/profile`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("auth")}` },
+        }
+      );
+      dispatch(setUser(response?.data?.data));
+
+      router.replace("/profile");
     } catch (error) {
       console.error(error);
     } finally {
@@ -93,7 +89,7 @@ function Edit_profile() {
     formImage.append("photo", selectedFile);
 
     try {
-      const response = await axios.patch(
+      await axios.patch(
         `${process.env.NEXT_PUBLIC_APP_BASE_URL}/profile/picture`,
         formImage,
         {
@@ -102,8 +98,14 @@ function Edit_profile() {
           },
         }
       );
-
-      handleClose();
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_APP_BASE_URL}/profile`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("auth")}` },
+        }
+      );
+      dispatch(setUser(response?.data?.data));
+      router.replace("/profile");
     } catch (error) {
       console.error("Axios error:", error);
     }
@@ -113,6 +115,142 @@ function Edit_profile() {
     if (event.target.files && event.target.files[0]) {
       setSelectedFile(event.target.files[0]);
       setPreviewSrc(URL.createObjectURL(event.target.files[0]));
+    }
+  };
+  //input skills
+  const [input, setInput] = useState("");
+  const [skills, setSkills] = useState([]);
+  const [suggestions, setSuggestions] = useState([
+    "HTML",
+    "CSS",
+    "Python",
+    "Postgresql",
+    "MySql",
+    "Vue",
+    "React",
+  ]);
+
+  const handleInputChange = (value) => {
+    setInput(value);
+  };
+
+  const handleAddSkill = (selectedOption) => {
+    setSkills(selectedOption);
+  };
+
+  const handleSubmitSkills = async () => {
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_APP_BASE_URL}/skills`,
+        JSON.stringify({ skills: skills.map((skill) => skill.value) }),
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+          },
+        }
+      );
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_APP_BASE_URL}/profile`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("auth")}` },
+        }
+      );
+
+      dispatch(setUser(response?.data?.data));
+      router.replace("/profile");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const filteredSuggestions = suggestions
+    .filter((suggestion) =>
+      suggestion.toLowerCase().includes(input.toLowerCase())
+    )
+    .slice(0, 5)
+    .map((suggestion) => ({ value: suggestion, label: suggestion }));
+
+  const handleDeleteSkill = async (index) => {
+    setIsLoading(true);
+    try {
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_APP_BASE_URL}/skills/${index}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+          },
+        }
+      );
+
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_APP_BASE_URL}/profile`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("auth")}` },
+        }
+      );
+
+      dispatch(setUser(response?.data?.data));
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  //add job history
+
+  const [jobState, setJobState] = useState({
+    position: "",
+    company: "",
+    date: "",
+    description: "",
+  });
+
+  const [photo, setPhoto] = useState("");
+
+  const handleJobChange = (event) => {
+    setJobState({
+      ...jobState,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const handlePhotoChange = (event) => {
+    setPhoto(event.target.files[0]);
+  };
+  const handleJobSubmit = async (event) => {
+    event.preventDefault();
+    setIsLoading(true);
+    const formData = new FormData();
+    formData.append("position", jobState.position);
+    formData.append("company", jobState.company);
+    formData.append("date", jobState.date);
+    formData.append("description", jobState.description);
+    formData.append("photo", photo);
+
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_APP_BASE_URL}/job`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+          },
+        }
+      );
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_APP_BASE_URL}/profile`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("auth")}` },
+        }
+      );
+      dispatch(setUser(response?.data?.data));
+      router.replace("/profile");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -125,7 +263,7 @@ function Edit_profile() {
             <div className="card">
               <img
                 src={user?.data?.photo}
-                className="rounded-circle mx-auto d-block mt-3"
+                className="rounded-circle mx-auto d-block mt-3 object-fit-cover"
                 width={`100`}
                 height={`100`}
                 alt="card"
@@ -285,32 +423,39 @@ function Edit_profile() {
                 <div className="d-inline ms-5 mb-2">
                   {Array.isArray(user?.data?.skills) &&
                     user.data.skills.map((item, key) => (
-                      <span key={key} className="badge bg-primary m-1 p-2 fs-6">
+                      <span key={key} className="badge bg-primary m-1 p-2">
                         {item}
-                        <button className="btn btn-danger ms-2">Hapus</button>
+                        <button
+                          className="btn btn-danger ms-2"
+                          style={{ fontSize: `12px` }}
+                          onClick={() => handleDeleteSkill(key)}
+                        >
+                          {isLoading ? "Menghapus" : "Hapus"}
+                        </button>
                       </span>
                     ))}
                 </div>
                 <hr />
                 <div className="d-flex">
-                  <div className="col-md-8 col-lg-8 m-5 mt-2 mb-3">
-                    <input
-                      type="skills"
-                      className="form-control"
+                  <div className="col-md-9 col-lg-9 m-5 mt-2 mb-3">
+                    <Select
+                      isMulti
                       name="skills"
-                      id="skills"
-                      value={valueSkills}
-                      onChange={onChangeSkills}
-                      aria-describedby="skills"
-                      placeholder="Masukan skill"
+                      options={filteredSuggestions}
+                      className="basic-multi-select"
+                      classNamePrefix="select"
+                      onInputChange={handleInputChange}
+                      onChange={handleAddSkill}
+                      value={skills}
                     />
                   </div>
-                  <div className="col-2">
+                  <div className="col-3 w-100 mt-2">
                     <button
-                      className="btn btn-warning mt-2 mb-2 w-100"
-                      onClick={() => onSearch(valueSkills)}
+                      className="btn btn-primary"
+                      type="button"
+                      onClick={handleSubmitSkills}
                     >
-                      Tambahkan
+                      Submit
                     </button>
                   </div>
                 </div>
@@ -320,7 +465,7 @@ function Edit_profile() {
               <div className="card-body">
                 <h4>Pengalaman Kerja</h4>
                 <hr />
-                <form>
+                <form onSubmit={handleJobSubmit}>
                   <div className="m-5 mt-2 mb-3">
                     <label htmlFor="inputPosition" className="form-label">
                       Posisi
@@ -329,6 +474,9 @@ function Edit_profile() {
                       type="position"
                       className="form-control"
                       id="inputPosition"
+                      name="position"
+                      value={jobState.position}
+                      onChange={handleJobChange}
                       aria-describedby="position"
                       placeholder="Web Developer"
                     />
@@ -342,6 +490,9 @@ function Edit_profile() {
                         type="position"
                         className="form-control"
                         id="inputPosition"
+                        name="company"
+                        value={jobState.company}
+                        onChange={handleJobChange}
                         aria-describedby="position"
                         placeholder="Web Developer"
                       />
@@ -354,10 +505,24 @@ function Edit_profile() {
                         type="position"
                         className="form-control"
                         id="inputPosition"
+                        name="date"
+                        value={jobState.date}
+                        onChange={handleJobChange}
                         aria-describedby="position"
                         placeholder="Web Developer"
                       />
                     </div>
+                  </div>
+                  <div className="m-5 mt-2 mb-3 ">
+                    <label htmlFor="formFile" className="form-label">
+                      Logo Perusahaan
+                    </label>
+                    <input
+                      className="form-control"
+                      type="file"
+                      id="formFile"
+                      onChange={handlePhotoChange}
+                    />
                   </div>
                   <div className="m-5 mt-2 mb-3">
                     <label htmlFor="inputJodPlace" className="form-label">
@@ -366,23 +531,21 @@ function Edit_profile() {
                     <textarea
                       type="text-area"
                       className="form-control"
-                      id="inputJobPlace"
+                      id="inputDescription"
+                      name="description"
+                      value={jobState.description}
+                      onChange={handleJobChange}
                       placeholder="Tuliskan deskripsi singkat"
                       style={{ height: `15vh` }}
                     />
                     <hr className="mb-5 mt-5" />
                   </div>
-                </form>
-                <div className="row">
-                  <div className="col-12 ">
-                    <button
-                      type="button"
-                      className="btn btn-outline-warning w-100"
-                    >
-                      Tambah Pengalaman Kerja
+                  <div className="ms-5 me-5">
+                    <button type="submit" className="btn btn-warning w-100">
+                      {isLoading ? "Memproses" : "Tambahkan Pengalaman Kerja"}
                     </button>
                   </div>
-                </div>
+                </form>
               </div>
             </div>
           </div>

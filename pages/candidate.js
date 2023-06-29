@@ -2,41 +2,46 @@ import React, { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from "next/link";
+import axios from "axios";
+import { storeJob } from "@/store/reducers/jobSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 function Job_list() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [sortOption, setSortOption] = useState("Sort");
-
+  const dispatch = useDispatch();
   const handleSortOptionClick = (option) => {
     setSortOption(option);
     setShowDropdown(false);
   };
-
   const [currentPage, setCurrentPage] = useState(1);
-  const profilesPerPage = 5;
+  const [totalPages, setTotalPages] = useState(0);
   const [profiles, setProfiles] = useState([]);
+  const user = useSelector((state) => state?.user?.data);
+  const removeData = (data, id) => {
+    return data.filter((obj) => obj.id !== id);
+  };
 
   useEffect(() => {
-    fetch("/api/user")
-      .then((response) => response.json())
-      .then((data) => setProfiles(data));
-  }, []);
+    axios
+      .get(`${process.env.NEXT_PUBLIC_APP_BASE_URL}/job?page=${currentPage}`)
+      .then((response) => {
+        const lastData = removeData(response?.data?.data?.rows, user?.id);
+        setProfiles(lastData);
+        setTotalPages(response?.data?.data?.total_page);
+        dispatch(storeJob(response?.data?.data?.rows));
+      })
+      .catch((error) => console.error(error));
+  }, [currentPage]);
+
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
+  }
 
   const handleClick = (event) => {
     setCurrentPage(Number(event.target.id));
   };
-
-  const indexOfLastProfile = currentPage * profilesPerPage;
-  const indexOfFirstProfile = indexOfLastProfile - profilesPerPage;
-  const currentProfiles = profiles.slice(
-    indexOfFirstProfile,
-    indexOfLastProfile
-  );
-
-  const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(profiles.length / profilesPerPage); i++) {
-    pageNumbers.push(i);
-  }
 
   return (
     <>
@@ -140,68 +145,54 @@ function Job_list() {
                 </button>
               </div>
             </div>
-            <div className="card shadow-lg">
-              <div className="row flex-column flex-md-row justify-content-center align-items-center text-center text-md-start gap-3">
-                {currentProfiles.map((profile, index) => (
-                  <div key={index} className="row align-items-center">
-                    <div className="col col-md-2 text-center">
-                      <img
-                        src={profile.photo}
-                        alt={profile.name}
-                        className="img-fluid"
-                      />
-                    </div>
-                    <div className="card-body col col-md-8">
-                      <h5>{profile.name}</h5>
-                      <p className="m-0 text-secondary">{profile.job}</p>
-                      <div className="d-flex align-items-center justify-content-md-start justify-content-center text-md-start ">
-                        <img className="me-1" src="map-pin.png" />
-                        <p className="m-0 text-secondary">{profile.location}</p>
-                      </div>
 
-                      <div className="d-inline">
-                        {Array.isArray(profile.skill) ? (
-                          profile.skill.map((item, key) => (
-                            <span
-                              key={key}
-                              className="badge bg-warning m-1 p-2"
-                            >
-                              {item}
-                            </span>
-                          ))
-                        ) : (
-                          <span className="badge bg-warning m-1 p-2">
-                            {profile.skill}
-                          </span>
-                        )}
-                      </div>
+            {profiles.map((profile, index) => (
+              <div className="card shadow-lg" key={index}>
+                <div className="row align-items-center mt-3 mb-3 ms-3">
+                  <div className="col-12 col-md-2 text-center">
+                    <img
+                      src={profile.photo}
+                      alt="profile"
+                      className="img-fluid rounded-circle"
+                      style={{ width: `20vh` }}
+                    />
+                  </div>
+                  <div className="col-12 col-md-8">
+                    <h5>{profile.fullname}</h5>
+                    <p className="m-0 text-secondary">{profile.job_title}</p>
+                    <div className="d-flex align-items-center">
+                      <img className="me-1" src="map-pin.png" alt="location" />
+                      <p className="m-0 text-secondary">{profile.domicile}</p>
                     </div>
-                    <div className="col col-md-2">
-                      <Link href="/profile">
-                        <button className="btn btn-primary">
-                          Lihat Profile
-                        </button>
-                      </Link>
-                    </div>
-
                     <div>
-                      <hr className="w-100" />
+                      {Array.isArray(profile.skills) ? (
+                        profile.skills.map((skill, key) => (
+                          <span key={key} className="badge bg-warning m-1 p-2">
+                            {skill}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="badge bg-warning m-1 p-2">
+                          {profile.skills}
+                        </span>
+                      )}
                     </div>
                   </div>
-                ))}
+                  <div className="col-12 col-md-2 text-center text-md-right">
+                    <Link href={`/user/${profile.id}`}>
+                      <button className="btn btn-primary">Lihat Profile</button>
+                    </Link>
+                  </div>
+                </div>
               </div>
-            </div>
+            ))}
+
             <div className="d-flex justify-content-center mt-4 mb-4">
               {pageNumbers.map((number) => (
                 <button
+                  className="btn btn-primary"
                   key={number}
-                  id={number}
-                  onClick={handleClick}
-                  className={`btn ${
-                    number === currentPage
-                      ? "btn-primary me-2"
-                      : "btn-outline-primary me-2"
-                  }`}
+                  onClick={() => setCurrentPage(number)}
                 >
                   {number}
                 </button>

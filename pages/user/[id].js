@@ -1,27 +1,20 @@
 import React from "react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import { useState, useEffect } from "react";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-
 import { useSelector } from "react-redux";
 
 function Profile() {
   const [activeTab, setActiveTab] = useState("portofolio");
-  const router = useRouter();
-  const user = useSelector((state) => state.user);
-  const [userData, setUserdata] = useState("");
-  useEffect(() => {
-    const storedToken = localStorage.getItem("auth");
-    if (!storedToken) {
-      router.push("/login");
-    } else {
-      let userData = user;
+  const { query } = useRouter();
+  const id = parseInt(query?.id);
 
-      setUserdata(userData);
-    }
-  }, [router, user]);
+  // const [user, setUser] = useState("");
+  const jobProfile = useSelector((state) =>
+    state?.job?.job?.find((job) => job.id === id)
+  );
 
   // let company = [...new Array(2)];
   return (
@@ -30,92 +23,90 @@ function Profile() {
       <div className="container mt-5 mb-5">
         <div className="row">
           <div className="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-            {user && user.data && user.data.photo && (
-              <div className="card">
-                <img
-                  src={user?.data?.photo}
-                  className="rounded-circle mx-auto d-block mt-3 object-fit-cover"
-                  width={`100`}
-                  height={`100`}
-                  alt="card"
-                />
-                <div className="card-body">
-                  <h5 className="card-title">{user?.data?.fullname}</h5>
-                  <p className="card-text">{user?.data?.company}</p>
-                  <div className="card-location mb-0 d-flex">
-                    <img
-                      className="me-2"
-                      src="/map-pin.png"
-                      width={`20`}
-                      height={`20`}
-                    />
-                    <p className="text-muted">{user?.data?.domicile}</p>
-                  </div>
-
-                  <p className="text-muted mb-2">{user?.data?.job_title}</p>
-                  <p className="text-muted mb-0">{user?.data?.description}</p>
-                </div>
-                <div className="d-grid gap-2 col">
-                  <div className="w-100">
-                    <Link href="/edit_profile">
-                      <button
-                        className="btn btn-primary mx-3"
-                        style={{ width: "calc(100% - 2rem)" }}
-                      >
-                        Edit profile
-                      </button>
-                    </Link>
-                  </div>
+            <div className="card">
+              <img
+                src={jobProfile?.photo}
+                className="rounded-circle mx-auto d-block mt-3"
+                width={`100`}
+                height={`100`}
+                alt="card"
+              />
+              <div className="card-body">
+                <h5 className="card-title">{jobProfile?.fullname}</h5>
+                <p className="card-text">{jobProfile?.company}</p>
+                <div className="card-location mb-0 d-flex">
+                  <img
+                    className="me-2"
+                    src="/map-pin.png"
+                    width={`20`}
+                    height={`20`}
+                  />
+                  <p className="text-muted">{jobProfile?.domicile}</p>
                 </div>
 
-                <h5 className="card-title ms-3 mt-5">Skills</h5>
-                <div className="card-skills ms-2 ">
-                  <div className="d-inline ">
-                    {user?.data?.skills.map((item, key) => (
-                      <span key={key} className="badge bg-warning m-1 p-2">
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <div className="card-location mb-0 ms-3 mt-5 d-flex">
-                  <img
-                    className="me-2"
-                    src="/mail.png"
-                    width={`20`}
-                    height={`20`}
-                  />
-                  <p className="text-muted">{user?.data?.email}</p>
-                </div>
-                <div className="card-location mb-0 ms-3 d-flex">
-                  <img
-                    className="me-2"
-                    src="/instagram.png"
-                    width={`20`}
-                    height={`20`}
-                  />
-                  <p className="text-muted">@Louist91</p>
-                </div>
-                <div className="card-location mb-0 ms-3 d-flex">
-                  <img
-                    className="me-2"
-                    src="/github.png"
-                    width={`20`}
-                    height={`20`}
-                  />
-                  <p className="text-muted">@Louistommo</p>
-                </div>
-                <div className="card-location mb-5 ms-3 d-flex">
-                  <img
-                    className="me-2"
-                    src="/gitlab.png"
-                    width={`20`}
-                    height={`20`}
-                  />
-                  <p className="text-muted">@Louistommo91</p>
+                <p className="text-muted mb-2">{jobProfile?.job_title}</p>
+                <p className="text-muted mb-0">{jobProfile?.description}</p>
+              </div>
+              <div className="d-grid gap-2 col">
+                <div className="w-100">
+                  <Link href="/hire">
+                    <button
+                      className="btn btn-primary mx-3"
+                      style={{ width: "calc(100% - 2rem)" }}
+                    >
+                      Hire
+                    </button>
+                  </Link>
                 </div>
               </div>
-            )}
+
+              <h5 className="card-title ms-3 mt-5">Skills</h5>
+              <div className="card-skills ms-2 ">
+                <div className="d-inline ">
+                  {jobProfile?.skills.map((item, key) => (
+                    <span key={key} className="badge bg-warning m-1 p-2">
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="card-location mb-0 ms-3 mt-5 d-flex">
+                <img
+                  className="me-2"
+                  src="/mail.png"
+                  width={`20`}
+                  height={`20`}
+                />
+                <p className="text-muted">{jobProfile?.email}</p>
+              </div>
+              <div className="card-location mb-0 ms-3 d-flex">
+                <img
+                  className="me-2"
+                  src="/instagram.png"
+                  width={`20`}
+                  height={`20`}
+                />
+                <p className="text-muted">@Louist91</p>
+              </div>
+              <div className="card-location mb-0 ms-3 d-flex">
+                <img
+                  className="me-2"
+                  src="/github.png"
+                  width={`20`}
+                  height={`20`}
+                />
+                <p className="text-muted">@Louistommo</p>
+              </div>
+              <div className="card-location mb-5 ms-3 d-flex">
+                <img
+                  className="me-2"
+                  src="/gitlab.png"
+                  width={`20`}
+                  height={`20`}
+                />
+                <p className="text-muted">@Louistommo91</p>
+              </div>
+            </div>
           </div>
           <div className="col-md-9 col-lg-9 col-xs-12 col-sm-12 ">
             <div className="card">
@@ -163,7 +154,7 @@ function Profile() {
                     <div className="col-md-4 col-lg-4 col-xs-12 col-sm-12">
                       <div className="card">
                         <img
-                          src="card1.png"
+                          src="../card1.png"
                           className="card-img-top "
                           alt="Image 1"
                         />
@@ -175,7 +166,7 @@ function Profile() {
                     <div className="col-md-4 col-lg-4 col-xs-12 col-sm-12">
                       <div className="card">
                         <img
-                          src="card2.png"
+                          src="../card2.png"
                           className="card-img-top"
                           alt="Image 2"
                         />
@@ -187,7 +178,7 @@ function Profile() {
                     <div className="col-md-4 col-lg-4 col-xs-12 col-sm-12">
                       <div className="card">
                         <img
-                          src="card3.png"
+                          src="../card3.png"
                           className="card-img-top"
                           alt="Image 3"
                         />
@@ -199,7 +190,7 @@ function Profile() {
                     <div className="col-md-4 col-lg-4 col-xs-12 col-sm-12">
                       <div className="card">
                         <img
-                          src="card4.png"
+                          src="../card4.png"
                           className="card-img-top"
                           alt="Image 3"
                         />
@@ -211,7 +202,7 @@ function Profile() {
                     <div className="col-md-4 col-lg-4 col-xs-12 col-sm-12">
                       <div className="card">
                         <img
-                          src="card5.png"
+                          src="../card5.png"
                           className="card-img-top"
                           alt="Image 3"
                         />
@@ -223,7 +214,7 @@ function Profile() {
                     <div className="col-md-4 col-lg-4 col-xs-12 col-sm-12">
                       <div className="card">
                         <img
-                          src="card6.png"
+                          src="../card6.png"
                           className="card-img-top"
                           alt="Image 3"
                         />
@@ -240,19 +231,21 @@ function Profile() {
                     activeTab === "pengalaman-kerja" ? "show active" : ""
                   }`}
                 >
-                  {user?.data?.job_history.map((job, index) => (
-                    <div key={index} className="row mt-4 ms-4 me-4">
+                  {jobProfile?.job_history.map((item, key) => (
+                    <div className="row mt-4 ms-4 me-4" key={key}>
                       <div className="col-md-2 col-lg-2 col-xs-2 col-sm-2">
-                        <img src={job.logo} style={{ width: `10vh` }} />
+                        <img src={item.logo} style={{ width: `10vh` }} />
                       </div>
                       <div className="col col-md-10 col-lg-10 col-xs-8 col-sm-8">
-                        <h5 className="mb-0">{job.position}</h5>
-                        <p className="mb-0">{job.company}</p>
+                        <h5 className="mb-0">{item?.position}</h5>
+                        <p className="mb-0">{item?.company}</p>
                         <div className="d-flex align-items-center">
-                          <p className="text-secondary">{job.date}</p>
+                          <p className="text-secondary">{item?.date}</p>
                           <p className="text-secondary ms-5">6 months</p>
                         </div>
-                        <p>{job.description}</p>
+                        <p>{item?.description}</p>
+
+                        {key === jobProfile.length - 1 ? null : <hr />}
                       </div>
                     </div>
                   ))}

@@ -3,11 +3,13 @@ import storage from "redux-persist/lib/storage";
 import counterSlice from "./reducers/counterSlice";
 import authReducer from "./reducers/authSlice";
 import userSlice from "./reducers/userSlice";
+import jobSlice from "./reducers/jobSlice";
 import { persistStore, persistReducer } from "redux-persist";
 import { encryptTransform } from "redux-persist-transform-encrypt";
 
 const persistConfig = {
   key: "root",
+  version: 1,
   storage,
   transforms: [
     encryptTransform({
@@ -23,6 +25,7 @@ const rootReducer = combineReducers({
   counterSlice,
   auth: authReducer,
   user: userSlice,
+  job: jobSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

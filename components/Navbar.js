@@ -58,17 +58,17 @@ const Navbar = () => {
                 <div className="d-flex align-items-center">
                   <img
                     className="m-2"
-                    src="mail.png"
+                    src="/mail.png"
                     style={{ width: `3vh`, height: `3vh` }}
                   />
                   <img
                     className="m-2"
-                    src="bell.png"
+                    src="/bell.png"
                     style={{ width: `3vh`, height: `3vh` }}
                   />
                   <div style={{ position: "relative" }}>
                     <img
-                      className="m-2 rounded-circle"
+                      className="m-2 rounded-circle object-fit-cover"
                       src={user?.data?.photo}
                       style={{ width: `5vh`, height: `5vh` }}
                       onClick={toggleDropdown}
