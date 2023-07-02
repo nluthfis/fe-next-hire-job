@@ -4,17 +4,66 @@ import Footer from "../../components/Footer";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { dispatch } from "react";
+import { sendHireTo } from "../../store/reducers/hireSlice";
+import { useEffect } from "react";
 
 function Profile() {
   const [activeTab, setActiveTab] = useState("portofolio");
   const { query } = useRouter();
   const id = parseInt(query?.id);
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const auth = useSelector((state) => state.auth);
 
-  // const [user, setUser] = useState("");
   const jobProfile = useSelector((state) =>
     state?.job?.job?.find((job) => job.id === id)
   );
+
+  const hireHandle = (profile) => {
+    dispatch(sendHireTo(profile));
+    router.replace("/hire");
+  };
+
+  useEffect(() => {
+    if (auth.token === null) {
+      router.replace("/login");
+    }
+  }, [auth.status]);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  let paths = [];
+
+  useEffect(() => {
+    const fetchPages = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_APP_BASE_URL}/job?page=${currentPage}`
+        );
+        const totalPages = response.data.data.total_page;
+
+        let allJobIds = [];
+
+        for (let i = 1; i <= totalPages; i++) {
+          const pageResponse = await axios.get(
+            `${process.env.NEXT_PUBLIC_APP_BASE_URL}/job?page=${i}`
+          );
+          const jobIds = pageResponse.data.data.rows.map((job) => job.id); // extract the IDs
+          allJobIds = [...allJobIds, ...jobIds]; // accumulate the IDs
+        }
+
+        paths = allJobIds; // assign the accumulated job IDs
+        setCurrentPage(totalPages); // update the current page
+        console.log(allJobIds);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchPages();
+  }, [currentPage]);
 
   // let company = [...new Array(2)];
   return (
@@ -26,7 +75,7 @@ function Profile() {
             <div className="card">
               <img
                 src={jobProfile?.photo}
-                className="rounded-circle mx-auto d-block mt-3"
+                className="rounded-circle mx-auto d-block mt-3 object-fit-cover"
                 width={`100`}
                 height={`100`}
                 alt="card"
@@ -49,10 +98,11 @@ function Profile() {
               </div>
               <div className="d-grid gap-2 col">
                 <div className="w-100">
-                  <Link href="/hire">
+                  <Link href={"/hire"}>
                     <button
                       className="btn btn-primary mx-3"
                       style={{ width: "calc(100% - 2rem)" }}
+                      onClick={() => hireHandle(jobProfile)}
                     >
                       Hire
                     </button>
@@ -259,5 +309,38 @@ function Profile() {
     </div>
   );
 }
+
+// export async function getStaticPaths() {
+//   let currentPage = 1;
+//   let paths = [];
+
+//   while (true) {
+//     try {
+//       const response = await axios.get(
+//         `${process.env.NEXT_PUBLIC_APP_BASE_URL}/job?page=${currentPage}`
+//       );
+//       const { rows, total_page } = response.data.data || {};
+
+//       if (Array.isArray(rows)) {
+//         const newPaths = rows.map((post) => ({
+//           params: { id: post?.id?.toString() },
+//         }));
+
+//         paths = [...paths, ...newPaths];
+//       }
+
+//       if (currentPage >= total_page) {
+//         break;
+//       }
+
+//       currentPage++;
+//     } catch (error) {
+//       console.error("API request failed:", error);
+//       break;
+//     }
+//   }
+//   console.log(paths);
+//   return { paths, fallback: "blocking" };
+// }
 
 export default Profile;

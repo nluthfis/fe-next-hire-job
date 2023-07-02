@@ -1,32 +1,57 @@
-// authSlice.js
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+
+export const loginUser = createAsyncThunk(
+  "auth/loginUser",
+  async ({ email, password }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_APP_BASE_URL}/auth/login`,
+        {
+          email,
+          password,
+        }
+      );
+      const { token, user } = response?.data?.data;
+      const { messages } = response?.data;
+
+      return { token, user, messages };
+    } catch (error) {
+      const messages = error.response?.data;
+      return rejectWithValue(messages);
+    }
+  }
+);
 
 const initialState = {
-  email: "",
-  password: "",
-  errMsg: null,
   token: null,
+  status: "idle",
+  error: null,
+  messages: "",
 };
-
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setEmail: (state, action) => {
-      state.email = action.payload;
-    },
-    setPassword: (state, action) => {
-      state.password = action.payload;
-    },
-    setErrMsg: (state, action) => {
-      state.errMsg = action.payload;
-    },
-    setToken: (state, action) => {
-      state.token = action.payload;
-    },
+    logout: (state) => initialState,
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(loginUser.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.token = action.payload.token;
+        state.messages = action.payload.messages;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.status = "failed";
+        state.messages = action.payload.messages;
+      });
   },
 });
 
-export const { setEmail, setPassword, setErrMsg, setToken } = authSlice.actions;
+export const { logout, updatePhoto } = authSlice.actions;
 
 export default authSlice.reducer;

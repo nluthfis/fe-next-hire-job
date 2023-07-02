@@ -10,12 +10,50 @@ import { setUser } from "../store/reducers/userSlice";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Select from "react-select";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faLocationDot,
+  faBuilding,
+  faSuitcaseRolling,
+} from "@fortawesome/free-solid-svg-icons";
+import { loginUser } from "@/store/reducers/authSlice";
 
 function Edit_profile() {
   const router = useRouter();
-  const user = useSelector((state) => state.user);
+  const auth = useSelector((state) => state?.auth);
+  const user = useSelector((state) => state?.user);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [activeTab, setActiveTab] = useState("job_history");
+
+  const getProperty = (prop) => {
+    return user?.data?.dataValues?.[prop] || user?.data?.[prop];
+  };
+  const token = auth?.token;
+  const fullname = getProperty("fullname");
+  const photoImage = getProperty("photo");
+  const company = getProperty("company");
+  const domicile = getProperty("domicile");
+  const job_title = getProperty("job_title");
+  const description = getProperty("description");
+  const phone = getProperty("phone");
+  const allSkill = getProperty("skills");
+  const email = getProperty("email");
+  const job_history = getProperty("job_history");
+
+  function capitalizeWords(str) {
+    return str?.replace(/\b\w/g, function (char) {
+      return char.toUpperCase();
+    });
+  }
+
+  useEffect(() => {
+    if (auth.token === null) {
+      router.replace("/login");
+    }
+  }, [auth.status]);
+
   const [formState, setFormState] = useState({
     fullname: "",
     company: "",
@@ -34,18 +72,18 @@ function Edit_profile() {
   };
 
   useEffect(() => {
-    if (user.data) {
+    if (user?.data) {
       setFormState({
-        fullname: user.data.fullname || "",
-        company: user.data.company || "",
-        job_title: user.data.job_title || "",
-        phone: user.data.phone || "",
-        description: user.data.description || "",
-        domicile: user.data.domicile || "",
+        fullname: fullname || "",
+        company: company || "",
+        job_title: job_title || "",
+        phone: phone || "",
+        description: description || "",
+        domicile: domicile || "",
       });
       setIsLoading(false);
     }
-  }, [user]);
+  }, [user?.data]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -55,13 +93,13 @@ function Edit_profile() {
         `${process.env.NEXT_PUBLIC_APP_BASE_URL}/profile`,
         formState,
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem("auth")}` },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_APP_BASE_URL}/profile`,
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem("auth")}` },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       dispatch(setUser(response?.data?.data));
@@ -89,21 +127,16 @@ function Edit_profile() {
     formImage.append("photo", selectedFile);
 
     try {
-      await axios.patch(
+      const response = await axios.patch(
         `${process.env.NEXT_PUBLIC_APP_BASE_URL}/profile/picture`,
         formImage,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_APP_BASE_URL}/profile`,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("auth")}` },
-        }
-      );
+
       dispatch(setUser(response?.data?.data));
       router.replace("/profile");
     } catch (error) {
@@ -134,26 +167,29 @@ function Edit_profile() {
     setInput(value);
   };
 
-  const handleAddSkill = (selectedOption) => {
-    setSkills(selectedOption);
+  const handleAddSkill = (selectedOptions) => {
+    setSkills(selectedOptions.map((option) => option.value));
   };
 
   const handleSubmitSkills = async () => {
     try {
       await axios.post(
         `${process.env.NEXT_PUBLIC_APP_BASE_URL}/skills`,
-        JSON.stringify({ skills: skills.map((skill) => skill.value) }),
+        JSON.stringify({ skills }),
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_APP_BASE_URL}/profile`,
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem("auth")}` },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
@@ -178,7 +214,8 @@ function Edit_profile() {
         `${process.env.NEXT_PUBLIC_APP_BASE_URL}/skills/${index}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -186,7 +223,10 @@ function Edit_profile() {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_APP_BASE_URL}/profile`,
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem("auth")}` },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
@@ -198,11 +238,11 @@ function Edit_profile() {
     }
   };
   //add job history
-
   const [jobState, setJobState] = useState({
     position: "",
     company: "",
-    date: "",
+    month: "",
+    year: "",
     description: "",
   });
 
@@ -218,13 +258,18 @@ function Edit_profile() {
   const handlePhotoChange = (event) => {
     setPhoto(event.target.files[0]);
   };
+
   const handleJobSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     const formData = new FormData();
     formData.append("position", jobState.position);
     formData.append("company", jobState.company);
-    formData.append("date", jobState.date);
+
+    // Combine the month and year values into the required format
+    const date = `${jobState.month}-${jobState.year}`;
+    formData.append("date", date);
+
     formData.append("description", jobState.description);
     formData.append("photo", photo);
 
@@ -235,14 +280,17 @@ function Edit_profile() {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_APP_BASE_URL}/profile`,
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem("auth")}` },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       dispatch(setUser(response?.data?.data));
@@ -254,21 +302,58 @@ function Edit_profile() {
     }
   };
 
+  const handleDeleteJob = async (id) => {
+    setIsLoading(true);
+    try {
+      await axios.delete(`${process.env.NEXT_PUBLIC_APP_BASE_URL}/job/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_APP_BASE_URL}/profile`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      dispatch(setUser(response?.data?.data));
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div>
       <Navbar />
+      <div
+        className="bg-primary position-absolute "
+        style={{
+          width: `100%`,
+          height: `40vh`,
+        }}
+      ></div>
       <div className="container mt-5 mb-5">
         <div className="row">
           <div className="col-md-3 col-lg-3 col-xs-12 col-sm-12 bg-light">
             <div className="card">
               <img
-                src={user?.data?.photo}
+                src={photoImage}
                 className="rounded-circle mx-auto d-block mt-3 object-fit-cover"
                 width={`100`}
                 height={`100`}
                 alt="card"
                 onClick={handleShow}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
               />
+              {isHovered && <span className="text-center">Edit Image</span>}
               <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                   <Modal.Title>Change Profile Picture</Modal.Title>
@@ -296,19 +381,25 @@ function Edit_profile() {
                 </Modal.Footer>
               </Modal>
               <div className="card-body">
-                <h5 className="card-title">{user?.data?.fullname}</h5>
-                <p className="card-text">{user?.data?.company}</p>
-                <div className="card-location mb-0 d-flex">
-                  <img
-                    className="me-2"
-                    src="/map-pin.png"
-                    width={`20`}
-                    height={`20`}
-                  />
-                  <p className="text-muted">{user?.data?.domicile}</p>
+                <h5 className="card-title">{capitalizeWords(fullname)}</h5>
+                <div className="d-flex align-items-center">
+                  <FontAwesomeIcon icon={faBuilding} />
+                  <p className="card-text ms-2 mb-0">
+                    {capitalizeWords(company)}
+                  </p>
                 </div>
-
-                <p className="text-muted mb-2">{user?.data?.job_title}</p>
+                <div className="d-flex align-items-center">
+                  <FontAwesomeIcon icon={faLocationDot} />
+                  <p className="text-muted ms-2 mb-0">
+                    {capitalizeWords(domicile)}
+                  </p>
+                </div>
+                <div className="d-flex align-items-center">
+                  <FontAwesomeIcon icon={faSuitcaseRolling} />
+                  <p className="text-muted ms-2 mb-0">
+                    {capitalizeWords(job_title)}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -420,9 +511,9 @@ function Edit_profile() {
               <div className="card-body">
                 <h4>Skill</h4>
                 <hr />
-                <div className="d-inline ms-5 mb-2">
-                  {Array.isArray(user?.data?.skills) &&
-                    user.data.skills.map((item, key) => (
+                <div className="d-flex flex-wrap m-5 mb-2">
+                  {Array.isArray(allSkill) &&
+                    allSkill.map((item, key) => (
                       <span key={key} className="badge bg-primary m-1 p-2">
                         {item}
                         <button
@@ -436,6 +527,14 @@ function Edit_profile() {
                     ))}
                 </div>
                 <hr />
+                {/* <div className="d-inline ms-5 mb-2">
+                  {Array.isArray(skills) &&
+                    skills.map((item, key) => (
+                      <span key={key} className="badge bg-primary m-1 p-2">
+                        {item}
+                      </span>
+                    ))}
+                </div> */}
                 <div className="d-flex">
                   <div className="col-md-9 col-lg-9 m-5 mt-2 mb-3">
                     <Select
@@ -446,7 +545,6 @@ function Edit_profile() {
                       classNamePrefix="select"
                       onInputChange={handleInputChange}
                       onChange={handleAddSkill}
-                      value={skills}
                     />
                   </div>
                   <div className="col-3 w-100 mt-2">
@@ -462,90 +560,212 @@ function Edit_profile() {
               </div>
             </div>
             <div className="card mt-3">
-              <div className="card-body">
-                <h4>Pengalaman Kerja</h4>
-                <hr />
-                <form onSubmit={handleJobSubmit}>
-                  <div className="m-5 mt-2 mb-3">
-                    <label htmlFor="inputPosition" className="form-label">
-                      Posisi
-                    </label>
-                    <input
-                      type="position"
-                      className="form-control"
-                      id="inputPosition"
-                      name="position"
-                      value={jobState.position}
-                      onChange={handleJobChange}
-                      aria-describedby="position"
-                      placeholder="Web Developer"
-                    />
-                  </div>
-                  <div className="d-flex">
-                    <div className="col-md-5 col-lg-5 ms-5 me-2 mt-2 mb-3">
-                      <label htmlFor="inputPosition" className="form-label">
-                        Nama Perusahaan
-                      </label>
-                      <input
-                        type="position"
-                        className="form-control"
-                        id="inputPosition"
-                        name="company"
-                        value={jobState.company}
-                        onChange={handleJobChange}
-                        aria-describedby="position"
-                        placeholder="Web Developer"
-                      />
+              <div className="card">
+                <h4 className="m-3">Pengalaman Kerja</h4>
+                <ul className="nav nav-tabs">
+                  <li className="nav-item">
+                    <a
+                      className={`nav-link ${
+                        activeTab === "job_history" ? "active" : ""
+                      }`}
+                      style={
+                        activeTab === "job_history"
+                          ? {
+                              backgroundColor: "#5e50a1",
+                              color: "white",
+                              marginLeft: `5vh`,
+                            }
+                          : { marginLeft: `5vh` }
+                      }
+                      onClick={() => setActiveTab("job_history")}
+                    >
+                      Tambah Pengalaman Kerja
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a
+                      className={`nav-link ${
+                        activeTab === "pengalaman-kerja" ? "active" : ""
+                      }`}
+                      style={
+                        activeTab === "pengalaman-kerja"
+                          ? {
+                              backgroundColor: "#5e50a1",
+                              color: "white",
+                            }
+                          : {}
+                      }
+                      onClick={() => setActiveTab("pengalaman-kerja")}
+                    >
+                      Hapus Pengalaman Kerja
+                    </a>
+                  </li>
+                </ul>
+
+                <div className="tab-content m-2 ">
+                  <div
+                    id="job_history"
+                    className={`tab-pane fade ${
+                      activeTab === "job_history" ? "show active" : ""
+                    }`}
+                  >
+                    <div className="card-body">
+                      <form onSubmit={handleJobSubmit}>
+                        <div className="m-5 mt-2 mb-3">
+                          <label htmlFor="inputPosition" className="form-label">
+                            Posisi
+                          </label>
+                          <input
+                            type="position"
+                            className="form-control"
+                            id="inputPosition"
+                            name="position"
+                            value={jobState.position}
+                            onChange={handleJobChange}
+                            aria-describedby="position"
+                            placeholder="Web Developer"
+                          />
+                        </div>
+                        <div className="d-flex">
+                          <div className="col-md-5 col-lg-5 ms-5 me-2 mt-2 mb-3">
+                            <label
+                              htmlFor="inputPosition"
+                              className="form-label"
+                            >
+                              Nama Perusahaan
+                            </label>
+                            <input
+                              type="position"
+                              className="form-control"
+                              id="inputPosition"
+                              name="company"
+                              value={jobState.company}
+                              onChange={handleJobChange}
+                              aria-describedby="position"
+                              placeholder="Web Developer"
+                            />
+                          </div>
+                          <div className="col-md-5 col-lg-5 m-5 mt-2 mb-3">
+                            <label
+                              htmlFor="inputPosition"
+                              className="form-label"
+                            >
+                              Bulan-Tahun
+                            </label>
+                            <div className="d-flex">
+                              <select
+                                className="form-control"
+                                id="month"
+                                name="month"
+                                value={jobState.month}
+                                onChange={handleJobChange}
+                              >
+                                <option value="">Select Month</option>
+                                <option value="01">January</option>
+                                <option value="02">February</option>
+                                <option value="03">March</option>
+                                <option value="04">April</option>
+                                <option value="05">May</option>
+                                <option value="06">June</option>
+                                <option value="07">July</option>
+                                <option value="08">August</option>
+                                <option value="09">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                              </select>
+                              <input
+                                type="number"
+                                className="form-control ml-2"
+                                id="year"
+                                name="year"
+                                value={jobState.year}
+                                onChange={handleJobChange}
+                                placeholder="YYYY"
+                                min="1900"
+                                max="2099"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="m-5 mt-2 mb-3 ">
+                          <label htmlFor="formFile" className="form-label">
+                            Logo Perusahaan
+                          </label>
+                          <input
+                            className="form-control"
+                            type="file"
+                            id="formFile"
+                            onChange={handlePhotoChange}
+                          />
+                        </div>
+                        <div className="m-5 mt-2 mb-3">
+                          <label htmlFor="inputJodPlace" className="form-label">
+                            Deskripsi Singkat
+                          </label>
+                          <textarea
+                            type="text-area"
+                            className="form-control"
+                            id="inputDescription"
+                            name="description"
+                            value={jobState.description}
+                            onChange={handleJobChange}
+                            placeholder="Tuliskan deskripsi singkat"
+                            style={{ height: `15vh` }}
+                          />
+                          <hr className="mb-5 mt-5" />
+                        </div>
+                        <div className="ms-5 me-5">
+                          <button
+                            type="submit"
+                            className="btn btn-warning w-100"
+                          >
+                            {isLoading
+                              ? "Memproses"
+                              : "Tambahkan Pengalaman Kerja"}
+                          </button>
+                        </div>
+                      </form>
                     </div>
-                    <div className="col-md-5 col-lg-5 m-5 mt-2 mb-3">
-                      <label htmlFor="inputPosition" className="form-label">
-                        Bulan/Tahun
-                      </label>
-                      <input
-                        type="position"
-                        className="form-control"
-                        id="inputPosition"
-                        name="date"
-                        value={jobState.date}
-                        onChange={handleJobChange}
-                        aria-describedby="position"
-                        placeholder="Web Developer"
-                      />
-                    </div>
                   </div>
-                  <div className="m-5 mt-2 mb-3 ">
-                    <label htmlFor="formFile" className="form-label">
-                      Logo Perusahaan
-                    </label>
-                    <input
-                      className="form-control"
-                      type="file"
-                      id="formFile"
-                      onChange={handlePhotoChange}
-                    />
+                  <div
+                    id="pengalaman-kerja"
+                    className={`tab-pane fade ${
+                      activeTab === "pengalaman-kerja" ? "show active" : ""
+                    }`}
+                  >
+                    {job_history?.length ? (
+                      job_history.map((job, index) => (
+                        <div key={index} className="row mt-4 ms-4 me-4">
+                          <div className="col-md-2 col-lg-2 col-xs-2 col-sm-2">
+                            <img src={job.logo} style={{ width: `10vh` }} />
+                          </div>
+                          <div className="col col-md-10 col-lg-10 col-xs-8 col-sm-8">
+                            <h5 className="mb-0">{job.position}</h5>
+                            <p className="mb-0">{job.company}</p>
+                            <div className="d-flex align-items-center">
+                              <p className="text-secondary">{job.date}</p>
+                              <p className="text-secondary ms-5">6 months</p>
+                            </div>
+                            <p>{job.description}</p>
+                          </div>
+                          <button
+                            className="bg-primary rounded-pill text-light fw-bold"
+                            onClick={() => handleDeleteJob(job.id)}
+                            style={{ height: `5vh` }}
+                          >
+                            {isLoading ? "Menghapus" : "Hapus"}
+                          </button>
+                        </div>
+                      ))
+                    ) : (
+                      <h1 className="text-center text-secondary m-5 ">
+                        Pengalaman Kerja Kosong
+                      </h1>
+                    )}
                   </div>
-                  <div className="m-5 mt-2 mb-3">
-                    <label htmlFor="inputJodPlace" className="form-label">
-                      Deskripsi Singkat
-                    </label>
-                    <textarea
-                      type="text-area"
-                      className="form-control"
-                      id="inputDescription"
-                      name="description"
-                      value={jobState.description}
-                      onChange={handleJobChange}
-                      placeholder="Tuliskan deskripsi singkat"
-                      style={{ height: `15vh` }}
-                    />
-                    <hr className="mb-5 mt-5" />
-                  </div>
-                  <div className="ms-5 me-5">
-                    <button type="submit" className="btn btn-warning w-100">
-                      {isLoading ? "Memproses" : "Tambahkan Pengalaman Kerja"}
-                    </button>
-                  </div>
-                </form>
+                </div>
               </div>
             </div>
           </div>

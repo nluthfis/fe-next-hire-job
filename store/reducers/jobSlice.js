@@ -11,6 +11,7 @@ export const jobSlice = createSlice({
     storeJob: (state, action) => {
       state.job = action.payload;
     },
+    reset: () => initialState,
   },
 });
 

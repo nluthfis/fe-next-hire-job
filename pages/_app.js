@@ -4,11 +4,13 @@ import "../styles/index.scss";
 import "../styles/candidate.scss";
 import "../styles/navbar.scss";
 import "../styles/find_job.scss";
-
 import { Provider } from "react-redux";
 import { store, persistor } from "@/store";
 import Script from "next/script";
 import { PersistGate } from "redux-persist/integration/react";
+import { config } from "@fortawesome/fontawesome-svg-core";
+import "@fortawesome/fontawesome-svg-core/styles.css";
+config.autoAddCss = false;
 
 export default function App({ Component, pageProps }) {
   return (

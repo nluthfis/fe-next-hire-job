@@ -1,40 +1,52 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSelector } from "react-redux";
-
-import { setUser, reset } from "../store/reducers/userSlice";
-
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
-
+import { persistor } from "../store/index";
+import { logout } from "../store/reducers/authSlice";
+import { reset } from "../store/reducers/userSlice";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faEnvelope,
+  faBell,
+  faUser,
+} from "@fortawesome/free-regular-svg-icons";
+import {
+  faMagnifyingGlass,
+  faUsersViewfinder,
+  faUserPen,
+  faRightFromBracket,
+} from "@fortawesome/free-solid-svg-icons";
 const Navbar = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
   const [isNavCollapsed, setIsNavCollapsed] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const user = useSelector((state) => state.user);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
+  const auth = useSelector((state) => state?.auth);
+  const user = useSelector((state) => state?.user);
+  const photo = user?.data?.dataValues
+    ? user?.data?.dataValues?.photo
+    : user?.data?.photo;
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("auth");
-    if (storedToken) {
+    const token = auth?.token;
+    if (token !== null) {
       setIsAuthenticated(true);
     }
-  }, []);
+  }, [router, user]);
 
   const handleLogout = () => {
     localStorage.clear();
     setIsAuthenticated(false);
+    dispatch(logout());
     dispatch(reset());
-    if (typeof window !== "undefined") {
-      setTimeout(() => {
-        router.replace("/login");
-      }, 0);
-    }
+    persistor.purge();
   };
 
   return (
@@ -56,59 +68,80 @@ const Navbar = () => {
             <div className="navbar-nav ms-auto">
               {isAuthenticated ? (
                 <div className="d-flex align-items-center">
-                  <img
-                    className="m-2"
-                    src="/mail.png"
-                    style={{ width: `3vh`, height: `3vh` }}
-                  />
-                  <img
-                    className="m-2"
-                    src="/bell.png"
-                    style={{ width: `3vh`, height: `3vh` }}
-                  />
+                  <div className="m-2">
+                    <FontAwesomeIcon
+                      icon={faEnvelope}
+                      size="xl"
+                      style={{ color: "#5e50a1" }}
+                    />
+                  </div>
+                  <div className="m-2">
+                    <FontAwesomeIcon
+                      icon={faBell}
+                      size="xl"
+                      style={{ color: "#5e50a1" }}
+                    />
+                  </div>
+
                   <div style={{ position: "relative" }}>
                     <img
                       className="m-2 rounded-circle object-fit-cover"
-                      src={user?.data?.photo}
+                      src={photo}
                       style={{ width: `5vh`, height: `5vh` }}
                       onClick={toggleDropdown}
                     />
                     {dropdownOpen && (
                       <div
-                        className="dropdown-menu show me-5"
+                        className="dropdown-menu show me-5 text-left"
                         style={{ position: "absolute", right: `-8vh` }}
                       >
-                        <div>
-                          <Link href="/find_job">
+                        <Link href="/find_job">
+                          <div className="ms-2">
+                            <FontAwesomeIcon icon={faMagnifyingGlass} />
                             <button className="btn text-primary fw-bold">
                               Find Job
                             </button>
-                          </Link>
-                          <Link href="/profile">
+                          </div>
+                        </Link>
+
+                        <Link href="/profile">
+                          <div className="ms-2">
+                            <FontAwesomeIcon icon={faUser} size="lg" />
                             <button className="btn text-primary fw-bold">
                               Profile
                             </button>
-                          </Link>
-                        </div>
+                          </div>
+                        </Link>
 
                         <Link href="/candidate">
-                          <button className="btn text-primary fw-bold">
-                            Find Candidate
-                          </button>
+                          <div className="ms-2">
+                            <FontAwesomeIcon icon={faUsersViewfinder} />
+                            <button className="btn text-primary fw-bold">
+                              Candidate
+                            </button>
+                          </div>
                         </Link>
 
                         <Link href="/edit_profile">
-                          <button className="btn text-primary fw-bold">
-                            Edit Profile
-                          </button>
+                          <div className="ms-2">
+                            <FontAwesomeIcon icon={faUserPen} />
+                            <button className="btn text-primary fw-bold">
+                              Edit Profile
+                            </button>
+                          </div>
                         </Link>
-
-                        <button
-                          className="btn text-primary fw-bold"
-                          onClick={handleLogout}
-                        >
-                          Logout
-                        </button>
+                        <div className="ms-2">
+                          <FontAwesomeIcon
+                            icon={faRightFromBracket}
+                            style={{ color: "#5e50a1" }}
+                          />
+                          <button
+                            className="btn text-primary fw-bold"
+                            onClick={handleLogout}
+                          >
+                            Logout
+                          </button>
+                        </div>
                       </div>
                     )}
                   </div>

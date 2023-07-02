@@ -5,8 +5,9 @@ import Link from "next/link";
 import axios from "axios";
 import { storeJob } from "@/store/reducers/jobSlice";
 import { useDispatch, useSelector } from "react-redux";
-
+import { useRouter } from "next/router";
 function Job_list() {
+  const router = useRouter();
   const [showDropdown, setShowDropdown] = useState(false);
   const [sortOption, setSortOption] = useState("Sort");
   const dispatch = useDispatch();
@@ -14,10 +15,18 @@ function Job_list() {
     setSortOption(option);
     setShowDropdown(false);
   };
+  const [pageStart, setPageStart] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [profiles, setProfiles] = useState([]);
   const user = useSelector((state) => state?.user?.data);
+  const auth = useSelector((state) => state?.auth);
+
+  useEffect(() => {
+    if (auth.token === null) {
+      router.replace("/login");
+    }
+  }, [auth.status]);
   const removeData = (data, id) => {
     return data.filter((obj) => obj.id !== id);
   };
@@ -34,14 +43,28 @@ function Job_list() {
       .catch((error) => console.error(error));
   }, [currentPage]);
 
+  const handleNext = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+      if (currentPage % 5 === 0) {
+        setPageStart(pageStart + 5);
+      }
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+      if ((currentPage - 1) % 5 === 0) {
+        setPageStart(pageStart - 5);
+      }
+    }
+  };
+
   const pageNumbers = [];
   for (let i = 1; i <= totalPages; i++) {
     pageNumbers.push(i);
   }
-
-  const handleClick = (event) => {
-    setCurrentPage(Number(event.target.id));
-  };
 
   return (
     <>
@@ -153,14 +176,14 @@ function Job_list() {
                     <img
                       src={profile.photo}
                       alt="profile"
-                      className="img-fluid rounded-circle"
-                      style={{ width: `20vh` }}
+                      className="img-fluid rounded-circle object-fit-cover"
+                      style={{ width: `20vh`, height: `20vh` }}
                     />
                   </div>
-                  <div className="col-12 col-md-8">
+                  <div className="col-12 col-md-8 text-center text-md-start text-lg-start">
                     <h5>{profile.fullname}</h5>
                     <p className="m-0 text-secondary">{profile.job_title}</p>
-                    <div className="d-flex align-items-center">
+                    <div className="d-flex align-items-center justify-content-center justify-content-md-start">
                       <img className="me-1" src="map-pin.png" alt="location" />
                       <p className="m-0 text-secondary">{profile.domicile}</p>
                     </div>
@@ -178,7 +201,7 @@ function Job_list() {
                       )}
                     </div>
                   </div>
-                  <div className="col-12 col-md-2 text-center text-md-right">
+                  <div className="col-12 col-md-2 text-center text-md-right mt-sm-3 mt-xs-3">
                     <Link href={`/user/${profile.id}`}>
                       <button className="btn btn-primary">Lihat Profile</button>
                     </Link>
@@ -188,15 +211,35 @@ function Job_list() {
             ))}
 
             <div className="d-flex justify-content-center mt-4 mb-4">
-              {pageNumbers.map((number) => (
-                <button
-                  className="btn btn-primary"
-                  key={number}
-                  onClick={() => setCurrentPage(number)}
-                >
-                  {number}
-                </button>
+              <button
+                className="btn btn-outline-primary me-3"
+                onClick={handlePrev}
+                disabled={currentPage === 1}
+              >
+                Prev
+              </button>
+              {pageNumbers.slice(pageStart, pageStart + 5).map((number) => (
+                <div className="m-1">
+                  <button
+                    className={`btn ${
+                      number === currentPage
+                        ? "btn-primary"
+                        : "btn-outline-primary"
+                    }`}
+                    key={number}
+                    onClick={() => setCurrentPage(number)}
+                  >
+                    {number}
+                  </button>
+                </div>
               ))}
+              <button
+                className="btn btn-outline-primary ms-3"
+                onClick={handleNext}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
             </div>
           </div>
         </div>

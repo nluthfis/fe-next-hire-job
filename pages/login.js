@@ -3,44 +3,38 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setEmail,
-  setPassword,
-  setErrMsg,
-  setToken,
-} from "../store/reducers/authSlice";
+import { setToken } from "../store/reducers/authSlice";
 import { setUser } from "../store/reducers/userSlice";
 import { useState } from "react";
+import { loginUser } from "../store/reducers/authSlice";
+import { useEffect } from "react";
 function Login() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { errMsg } = useSelector((state) => state.auth);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const auth = useSelector((state) => state.auth);
+  const status = useSelector((state) => state.auth.status);
+  const messages = useSelector((state) => state.auth.messages);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (event) => {
+  async function handleLogin(event) {
     event.preventDefault();
     setIsLoading(true);
-    axios
-      .post(`${process.env.NEXT_PUBLIC_APP_BASE_URL}/auth/login`, {
-        email,
-        password,
-      })
-      .then((response) => {
-        const { token, user } = response?.data?.data;
-        dispatch(setToken(token));
-        dispatch(setUser(user));
-        localStorage.setItem("auth", token);
-        router.push("/profile");
-      })
-      .catch(({ response }) => {
-        dispatch(setErrMsg(response?.data?.message ?? "Wrong Email/Password"));
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
+    try {
+      const action = await dispatch(loginUser({ email, password }));
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (status === "succeeded") {
+      router.replace("/");
+    }
+  }, [status]);
 
   return (
     <div id="login_page">
@@ -68,11 +62,12 @@ function Login() {
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
                 euismod ipsum et dui rhoncus auctor.
               </p>
-              {errMsg ? (
+              {messages && (
                 <div className="alert alert-danger ms-5" role="alert">
-                  {errMsg}
+                  {messages}
                 </div>
-              ) : null}
+              )}
+              {auth.status === "failed" && <div>{auth.messages}</div>}
 
               <form onSubmit={handleLogin}>
                 <div className="m-5 mt-2 mb-3">
