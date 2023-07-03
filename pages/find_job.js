@@ -108,7 +108,7 @@ function Find_job() {
                     <div className=" mt-0 d-flex">
                       <div>
                         <Image
-                          className="me-3"
+                          className="ms-5 mt-5"
                           src={selectedJob.logo}
                           alt="Job Logo"
                           width={80}

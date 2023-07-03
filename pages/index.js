@@ -3,6 +3,7 @@ import Footer from "../components/Footer";
 import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
 import { increment } from "@/store/reducers/counterSlice";
+import Link from "next/link";
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -27,9 +28,12 @@ export default function Home() {
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
                 euismod ipsum et dui rhoncus auctor.
               </p>
-              <button className="btn btn-primary btn-lg w-50 ms-5 mb-2">
-                Mulai Dari Sekarang
-              </button>
+              <Link href="/edit_profile">
+                <button className="btn btn-primary btn-lg w-50 ms-5 mb-2">
+                  Mulai Dari Sekarang
+                </button>
+              </Link>
+
               {/* <button
                 className="btn btn-primary btn-lg"
                 onClick={handleCounter}

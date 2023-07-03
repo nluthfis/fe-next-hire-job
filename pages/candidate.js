@@ -71,9 +71,7 @@ function Job_list() {
       <Navbar />
       <nav className="navbar navbar-expand-lg navbar-primary bg-primary">
         <div className="container">
-          <a className="navbar-brand fs-4 text-light fw-bold ms-3" href="#">
-            Candidate
-          </a>
+          <a className="navbar-brand fs-4 text-light fw-bold ms-3">Candidate</a>
         </div>
       </nav>
       <div className="container ">

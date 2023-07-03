@@ -22,12 +22,8 @@ import {
 function Profile() {
   const [activeTab, setActiveTab] = useState("portofolio");
   const router = useRouter();
-
-  const [userData, setUserdata] = useState("");
-
   const auth = useSelector((state) => state?.auth);
   const user = useSelector((state) => state?.user);
-
   const getProperty = (prop) => {
     return user?.data?.dataValues?.[prop] || user?.data?.[prop];
   };
@@ -53,7 +49,6 @@ function Profile() {
       return char.toUpperCase();
     });
   }
-  console.log(job_history);
   // let company = [...new Array(2)];
   return (
     <div>
@@ -99,7 +94,6 @@ function Profile() {
                   </div>
                   <div className="d-flex align-items-start">
                     <FontAwesomeIcon icon={faNoteSticky} className="mt-1" />{" "}
-                    {/* Adjust as needed */}
                     <p className="text-muted ms-2 mb-0 mt-0">{description}</p>
                   </div>
                 </div>
