@@ -15,6 +15,8 @@ function Hire() {
   const dispatch = useDispatch();
   const router = useRouter();
   const user = useSelector((state) => state?.hire?.data);
+  const auth = useSelector((state) => state?.auth);
+  const token = auth?.token;
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -27,7 +29,7 @@ function Hire() {
           description: message,
         },
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem("auth")}` },
+          headers: { Authorization: `Bearer ${token}` },
         }
       )
       .then(() => {

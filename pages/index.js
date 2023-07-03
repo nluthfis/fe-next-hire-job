@@ -28,7 +28,7 @@ export default function Home() {
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
                 euismod ipsum et dui rhoncus auctor.
               </p>
-              <Link href="/edit_profile">
+              <Link href="/candidate">
                 <button className="btn btn-primary btn-lg w-50 ms-5 mb-2">
                   Mulai Dari Sekarang
                 </button>

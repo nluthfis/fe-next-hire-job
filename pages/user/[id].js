@@ -9,19 +9,6 @@ import axios from "axios";
 import { dispatch } from "react";
 import { sendHireTo } from "../../store/reducers/hireSlice";
 import { useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faGithub,
-  faInstagram,
-  faGitlab,
-} from "@fortawesome/free-brands-svg-icons";
-import {
-  faLocationDot,
-  faBuilding,
-  faSuitcaseRolling,
-  faNoteSticky,
-  faEnvelope,
-} from "@fortawesome/free-solid-svg-icons";
 
 function Profile() {
   const [activeTab, setActiveTab] = useState("portofolio");
@@ -40,49 +27,43 @@ function Profile() {
     router.replace("/hire");
   };
 
-  function capitalizeWords(str) {
-    return str.replace(/\b\w/g, function (char) {
-      return char.toUpperCase();
-    });
-  }
-
   useEffect(() => {
     if (auth.token === null) {
       router.replace("/login");
     }
   }, [auth.status]);
 
-  // const [currentPage, setCurrentPage] = useState(1);
-  // let paths = [];
+  const [currentPage, setCurrentPage] = useState(1);
+  let paths = [];
 
-  // useEffect(() => {
-  //   const fetchPages = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `${process.env.NEXT_PUBLIC_APP_BASE_URL}/job?page=${currentPage}`
-  //       );
-  //       const totalPages = response.data.data.total_page;
+  useEffect(() => {
+    const fetchPages = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_APP_BASE_URL}/job?page=${currentPage}`
+        );
+        const totalPages = response.data.data.total_page;
 
-  //       let allJobIds = [];
+        let allJobIds = [];
 
-  //       for (let i = 1; i <= totalPages; i++) {
-  //         const pageResponse = await axios.get(
-  //           `${process.env.NEXT_PUBLIC_APP_BASE_URL}/job?page=${i}`
-  //         );
-  //         const jobIds = pageResponse.data.data.rows.map((job) => job.id); // extract the IDs
-  //         allJobIds = [...allJobIds, ...jobIds]; // accumulate the IDs
-  //       }
+        for (let i = 1; i <= totalPages; i++) {
+          const pageResponse = await axios.get(
+            `${process.env.NEXT_PUBLIC_APP_BASE_URL}/job?page=${i}`
+          );
+          const jobIds = pageResponse.data.data.rows.map((job) => job.id); // extract the IDs
+          allJobIds = [...allJobIds, ...jobIds]; // accumulate the IDs
+        }
 
-  //       paths = allJobIds; // assign the accumulated job IDs
-  //       setCurrentPage(totalPages); // update the current page
-  //       console.log(allJobIds);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
+        paths = allJobIds; // assign the accumulated job IDs
+        setCurrentPage(totalPages); // update the current page
+        console.log(allJobIds);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-  //   fetchPages();
-  // }, [currentPage]);
+    fetchPages();
+  }, [currentPage]);
 
   // let company = [...new Array(2)];
   return (
@@ -100,35 +81,20 @@ function Profile() {
                 alt="card"
               />
               <div className="card-body">
-                <h5 className="card-title">
-                  {capitalizeWords(jobProfile?.fullname)}
-                </h5>
-                <div className="d-flex align-items-center">
-                  <FontAwesomeIcon icon={faBuilding} />
-                  <p className="card-text ms-2 mb-0">
-                    {capitalizeWords(jobProfile?.company)}
-                  </p>
+                <h5 className="card-title">{jobProfile?.fullname}</h5>
+                <p className="card-text">{jobProfile?.company}</p>
+                <div className="card-location mb-0 d-flex">
+                  <img
+                    className="me-2"
+                    src="/map-pin.png"
+                    width={`20`}
+                    height={`20`}
+                  />
+                  <p className="text-muted">{jobProfile?.domicile}</p>
                 </div>
 
-                <div className="d-flex align-items-center">
-                  <FontAwesomeIcon icon={faLocationDot} />
-                  <p className="text-muted ms-2 mb-0">
-                    {capitalizeWords(jobProfile?.domicile)}
-                  </p>
-                </div>
-
-                <div className="d-flex align-items-center">
-                  <FontAwesomeIcon icon={faSuitcaseRolling} />
-                  <p className="text-muted ms-2 mb-0">
-                    {capitalizeWords(jobProfile?.job_title)}
-                  </p>
-                </div>
-                <div className="d-flex align-items-start">
-                  <FontAwesomeIcon icon={faNoteSticky} className="mt-1" />{" "}
-                  <p className="text-muted ms-2 mb-0 mt-0">
-                    {jobProfile?.description}
-                  </p>
-                </div>
+                <p className="text-muted mb-2">{jobProfile?.job_title}</p>
+                <p className="text-muted mb-0">{jobProfile?.description}</p>
               </div>
               <div className="d-grid gap-2 col">
                 <div className="w-100">
@@ -154,21 +120,41 @@ function Profile() {
                   ))}
                 </div>
               </div>
-              <div className="d-flex align-items-center mb-0 ms-3 mt-5">
-                <FontAwesomeIcon icon={faEnvelope} />
-                <p className="text-muted ms-2 mb-0">{jobProfile?.email}</p>
+              <div className="card-location mb-0 ms-3 mt-5 d-flex">
+                <img
+                  className="me-2"
+                  src="/mail.png"
+                  width={`20`}
+                  height={`20`}
+                />
+                <p className="text-muted">{jobProfile?.email}</p>
               </div>
-              <div className="d-flex align-items-center mb-0 ms-3 mt-2">
-                <FontAwesomeIcon icon={faInstagram} />
-                <p className="text-muted ms-2 mb-0">@Louist91</p>
+              <div className="card-location mb-0 ms-3 d-flex">
+                <img
+                  className="me-2"
+                  src="/instagram.png"
+                  width={`20`}
+                  height={`20`}
+                />
+                <p className="text-muted">@Louist91</p>
               </div>
-              <div className="d-flex align-items-center mb-0 ms-3 mt-2">
-                <FontAwesomeIcon icon={faGithub} />
-                <p className="text-muted ms-2 mb-0">@Louistommo</p>
+              <div className="card-location mb-0 ms-3 d-flex">
+                <img
+                  className="me-2"
+                  src="/github.png"
+                  width={`20`}
+                  height={`20`}
+                />
+                <p className="text-muted">@Louistommo</p>
               </div>
-              <div className="d-flex align-items-center mb-5 ms-3 mt-2">
-                <FontAwesomeIcon icon={faGitlab} />
-                <p className="text-muted ms-2 mb-0">@Louistommo91</p>
+              <div className="card-location mb-5 ms-3 d-flex">
+                <img
+                  className="me-2"
+                  src="/gitlab.png"
+                  width={`20`}
+                  height={`20`}
+                />
+                <p className="text-muted">@Louistommo91</p>
               </div>
             </div>
           </div>
@@ -295,29 +281,24 @@ function Profile() {
                     activeTab === "pengalaman-kerja" ? "show active" : ""
                   }`}
                 >
-                  {jobProfile?.job_history.length ? (
-                    job_history.map((job, index) => (
-                      <div key={index} className="row mt-4 ms-4 me-4">
-                        <div className="col-md-2 col-lg-2 col-xs-2 col-sm-2">
-                          <img src={job.logo} style={{ width: `10vh` }} />
-                        </div>
-                        <div className="col col-md-10 col-lg-10 col-xs-8 col-sm-8">
-                          <h5 className="mb-0">{job.position}</h5>
-                          <p className="mb-0">{job.company}</p>
-                          <div className="d-flex align-items-center">
-                            <p className="text-secondary">{job.date}</p>
-                            <p className="text-secondary ms-5">6 months</p>
-                          </div>
-                          <p>{job.description}</p>
-                        </div>
-                        <hr className="border border-primary border-3 opacity-75" />
+                  {jobProfile?.job_history.map((item, key) => (
+                    <div className="row mt-4 ms-4 me-4" key={key}>
+                      <div className="col-md-2 col-lg-2 col-xs-2 col-sm-2">
+                        <img src={item.logo} style={{ width: `10vh` }} />
                       </div>
-                    ))
-                  ) : (
-                    <h1 className="text-center text-secondary m-5 ">
-                      Pengalaman Kerja Kosong
-                    </h1>
-                  )}
+                      <div className="col col-md-10 col-lg-10 col-xs-8 col-sm-8">
+                        <h5 className="mb-0">{item?.position}</h5>
+                        <p className="mb-0">{item?.company}</p>
+                        <div className="d-flex align-items-center">
+                          <p className="text-secondary">{item?.date}</p>
+                          <p className="text-secondary ms-5">6 months</p>
+                        </div>
+                        <p>{item?.description}</p>
+
+                        {key === jobProfile.length - 1 ? null : <hr />}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -329,30 +310,37 @@ function Profile() {
   );
 }
 
-export async function getStaticPaths() {
-  // Call an external API endpoint to get posts
-  const {
-    data: { data },
-  } = await axios.get(`${process.env.NEXT_PUBLIC_APP_BASE_URL}/job/all`);
+// export async function getStaticPaths() {
+//   let currentPage = 1;
+//   let paths = [];
 
-  // Get the paths we want to pre-render based on posts
-  const paths = data.map((post) => ({
-    params: { id: post?.id?.toString() },
-  }));
+//   while (true) {
+//     try {
+//       const response = await axios.get(
+//         `${process.env.NEXT_PUBLIC_APP_BASE_URL}/job?page=${currentPage}`
+//       );
+//       const { rows, total_page } = response.data.data || {};
 
-  // We'll pre-render only these paths at build time.
-  // { fallback: false } means other routes should 404.
-  return { paths, fallback: "blocking" };
-}
+//       if (Array.isArray(rows)) {
+//         const newPaths = rows.map((post) => ({
+//           params: { id: post?.id?.toString() },
+//         }));
 
-// convert this page into html
-export async function getStaticProps() {
-  return {
-    props: {
-      id: null,
-    },
-    revalidate: 10,
-  };
-}
+//         paths = [...paths, ...newPaths];
+//       }
+
+//       if (currentPage >= total_page) {
+//         break;
+//       }
+
+//       currentPage++;
+//     } catch (error) {
+//       console.error("API request failed:", error);
+//       break;
+//     }
+//   }
+//   console.log(paths);
+//   return { paths, fallback: "blocking" };
+// }
 
 export default Profile;
