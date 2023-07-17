@@ -9,61 +9,87 @@ import axios from "axios";
 import { dispatch } from "react";
 import { sendHireTo } from "../../store/reducers/hireSlice";
 import { useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faLocationDot,
+  faBuilding,
+  faSuitcaseRolling,
+  faNoteSticky,
+  faEnvelope,
+} from "@fortawesome/free-solid-svg-icons";
 
-function Profile() {
-  const [activeTab, setActiveTab] = useState("portofolio");
+function Profile({ profile }) {
+  if (!profile) {
+    return <div>No profile found</div>;
+  }
+  const [activeTab, setActiveTab] = useState("pengalaman-kerja");
   const { query } = useRouter();
   const id = parseInt(query?.id);
   const dispatch = useDispatch();
   const router = useRouter();
-  const auth = useSelector((state) => state.auth);
+  function capitalizeWords(str) {
+    return str.replace(/\b\w/g, function (char) {
+      return char.toUpperCase();
+    });
+  }
 
-  const jobProfile = useSelector((state) =>
-    state?.job?.job?.find((job) => job.id === id)
-  );
+  // const auth = useSelector((state) => state.auth);
 
-  const hireHandle = (profile) => {
-    dispatch(sendHireTo(profile));
-    router.replace("/hire");
-  };
+  // const jobProfile = useSelector((state) =>
+  //   state?.job?.job?.find((job) => job.id === id)
+  // );
 
-  useEffect(() => {
-    if (auth.token === null) {
-      router.replace("/login");
-    }
-  }, [auth.status]);
+  // const hireHandle = (profile) => {
+  //   dispatch(sendHireTo(profile));
+  //   router.replace("/hire");
+  // };
 
-  const [currentPage, setCurrentPage] = useState(1);
-  let paths = [];
+  // useEffect(() => {
+  //   if (auth.token === null) {
+  //     router.replace("/login");
+  //   }
+  // }, [auth.status]);
 
-  useEffect(() => {
-    const fetchPages = async () => {
-      try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_APP_BASE_URL}/job?page=${currentPage}`
-        );
-        const totalPages = response.data.data.total_page;
+  // useEffect(async () => {
+  //   const res = await axios.get(
+  //     `${process.env.NEXT_PUBLIC_APP_BASE_URL}/job/all`
+  //   );
+  //   // const profiles = res?.data?.data;
+  //   const profile = res.data?.data;
+  //   console.log(profile);
+  // }, []);
 
-        let allJobIds = [];
+  // const [currentPage, setCurrentPage] = useState(1);
+  // let paths = [];
 
-        for (let i = 1; i <= totalPages; i++) {
-          const pageResponse = await axios.get(
-            `${process.env.NEXT_PUBLIC_APP_BASE_URL}/job?page=${i}`
-          );
-          const jobIds = pageResponse.data.data.rows.map((job) => job.id); // extract the IDs
-          allJobIds = [...allJobIds, ...jobIds]; // accumulate the IDs
-        }
+  // useEffect(() => {
+  //   const fetchPages = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `${process.env.NEXT_PUBLIC_APP_BASE_URL}/job?page=${currentPage}`
+  //       );
+  //       const totalPages = response.data.data.total_page;
 
-        paths = allJobIds; // assign the accumulated job IDs
-        setCurrentPage(totalPages); // update the current page
-        console.log(allJobIds);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+  //       let allJobIds = [];
 
-    fetchPages();
-  }, [currentPage]);
+  //       for (let i = 1; i <= totalPages; i++) {
+  //         const pageResponse = await axios.get(
+  //           `${process.env.NEXT_PUBLIC_APP_BASE_URL}/job?page=${i}`
+  //         );
+  //         const jobIds = pageResponse.data.data.rows.map((job) => job.id); // extract the IDs
+  //         allJobIds = [...allJobIds, ...jobIds]; // accumulate the IDs
+  //       }
+
+  //       paths = allJobIds; // assign the accumulated job IDs
+  //       setCurrentPage(totalPages); // update the current page
+  //       console.log(allJobIds);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+
+  //   fetchPages();
+  // }, [currentPage]);
 
   // let company = [...new Array(2)];
   return (
@@ -74,27 +100,46 @@ function Profile() {
           <div className="col-md-3 col-lg-3 col-xs-12 col-sm-12">
             <div className="card">
               <img
-                src={jobProfile?.photo}
+                src={profile?.photo || "/default_photo.jpg"}
                 className="rounded-circle mx-auto d-block mt-3 object-fit-cover"
                 width={`100`}
                 height={`100`}
                 alt="card"
               />
               <div className="card-body">
-                <h5 className="card-title">{jobProfile?.fullname}</h5>
-                <p className="card-text">{jobProfile?.company}</p>
-                <div className="card-location mb-0 d-flex">
-                  <img
-                    className="me-2"
-                    src="/map-pin.png"
-                    width={`20`}
-                    height={`20`}
-                  />
-                  <p className="text-muted">{jobProfile?.domicile}</p>
+                <h5 className="card-title">{profile?.fullname}</h5>
+                <div className="d-flex align-items-center">
+                  <FontAwesomeIcon icon={faBuilding} />
+                  <p className="card-text ms-2 mb-0">
+                    {profile?.company && profile?.company !== "-"
+                      ? capitalizeWords(profile?.company)
+                      : "Company tidak tersedia"}
+                  </p>
                 </div>
-
-                <p className="text-muted mb-2">{jobProfile?.job_title}</p>
-                <p className="text-muted mb-0">{jobProfile?.description}</p>
+                <div className="d-flex align-items-center">
+                  <FontAwesomeIcon icon={faLocationDot} />
+                  <p className="card-text ms-2 mb-0">
+                    {profile?.domicile && profile?.domicile !== "-"
+                      ? capitalizeWords(profile?.domicile)
+                      : "Domisili tidak tersedia"}
+                  </p>
+                </div>
+                <div className="d-flex align-items-center">
+                  <FontAwesomeIcon icon={faSuitcaseRolling} />
+                  <p className="card-text ms-2 mb-0">
+                    {profile?.job_title && profile?.job_title !== "-"
+                      ? capitalizeWords(profile?.job_title)
+                      : "Title tidak tersedia"}
+                  </p>
+                </div>
+                <div className="d-flex align-items-start">
+                  <FontAwesomeIcon icon={faNoteSticky} className="mt-1" />{" "}
+                  <p className="text-muted ms-2 mb-0 mt-0">
+                    {profile?.description && profile?.description !== "-"
+                      ? profile?.description
+                      : "Description tidak tersedia"}
+                  </p>
+                </div>
               </div>
               <div className="d-grid gap-2 col">
                 <div className="w-100">
@@ -102,7 +147,7 @@ function Profile() {
                     <button
                       className="btn btn-primary mx-3"
                       style={{ width: "calc(100% - 2rem)" }}
-                      onClick={() => hireHandle(jobProfile)}
+                      onClick={() => hireHandle(profile)}
                     >
                       Hire
                     </button>
@@ -113,7 +158,7 @@ function Profile() {
               <h5 className="card-title ms-3 mt-5">Skills</h5>
               <div className="card-skills ms-2 ">
                 <div className="d-inline ">
-                  {jobProfile?.skills.map((item, key) => (
+                  {profile?.skills.map((item, key) => (
                     <span key={key} className="badge bg-warning m-1 p-2">
                       {item}
                     </span>
@@ -127,9 +172,9 @@ function Profile() {
                   width={`20`}
                   height={`20`}
                 />
-                <p className="text-muted">{jobProfile?.email}</p>
+                <p className="text-muted">{profile?.email}</p>
               </div>
-              <div className="card-location mb-0 ms-3 d-flex">
+              {/* <div className="card-location mb-0 ms-3 d-flex">
                 <img
                   className="me-2"
                   src="/instagram.png"
@@ -155,27 +200,12 @@ function Profile() {
                   height={`20`}
                 />
                 <p className="text-muted">@Louistommo91</p>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="col-md-9 col-lg-9 col-xs-12 col-sm-12 ">
             <div className="card">
               <ul className="nav nav-tabs">
-                <li className="nav-item">
-                  <a
-                    className={`nav-link ${
-                      activeTab === "portofolio" ? "active" : ""
-                    }`}
-                    style={
-                      activeTab === "portofolio"
-                        ? { borderBottom: "2px solid #5e50a1" }
-                        : {}
-                    }
-                    onClick={() => setActiveTab("portofolio")}
-                  >
-                    Portofolio
-                  </a>
-                </li>
                 <li className="nav-item">
                   <a
                     className={`nav-link ${
@@ -200,80 +230,7 @@ function Profile() {
                     activeTab === "portofolio" ? "show active" : ""
                   }`}
                 >
-                  <div className="row mt-3">
-                    <div className="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-                      <div className="card">
-                        <img
-                          src="../card1.png"
-                          className="card-img-top "
-                          alt="Image 1"
-                        />
-                        <div className="card-body">
-                          <p>card1</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-                      <div className="card">
-                        <img
-                          src="../card2.png"
-                          className="card-img-top"
-                          alt="Image 2"
-                        />
-                        <div className="card-body">
-                          <p>card 2</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-                      <div className="card">
-                        <img
-                          src="../card3.png"
-                          className="card-img-top"
-                          alt="Image 3"
-                        />
-                        <div className="card-body">
-                          <p>card 3</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-                      <div className="card">
-                        <img
-                          src="../card4.png"
-                          className="card-img-top"
-                          alt="Image 3"
-                        />
-                        <div className="card-body">
-                          <p>card 4</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-                      <div className="card">
-                        <img
-                          src="../card5.png"
-                          className="card-img-top"
-                          alt="Image 3"
-                        />
-                        <div className="card-body">
-                          <p>card 5</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-                      <div className="card">
-                        <img
-                          src="../card6.png"
-                          className="card-img-top"
-                          alt="Image 3"
-                        />
-                        <div className="card-body">
-                          <p>card 6</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <div className="row mt-3"></div>
                 </div>
                 <div
                   id="pengalaman-kerja"
@@ -281,24 +238,40 @@ function Profile() {
                     activeTab === "pengalaman-kerja" ? "show active" : ""
                   }`}
                 >
-                  {jobProfile?.job_history.map((item, key) => (
-                    <div className="row mt-4 ms-4 me-4" key={key}>
-                      <div className="col-md-2 col-lg-2 col-xs-2 col-sm-2">
-                        <img src={item.logo} style={{ width: `10vh` }} />
-                      </div>
-                      <div className="col col-md-10 col-lg-10 col-xs-8 col-sm-8">
-                        <h5 className="mb-0">{item?.position}</h5>
-                        <p className="mb-0">{item?.company}</p>
-                        <div className="d-flex align-items-center">
-                          <p className="text-secondary">{item?.date}</p>
-                          <p className="text-secondary ms-5">6 months</p>
+                  {profile?.job_history && profile?.job_history?.length > 0 ? (
+                    profile?.job_history?.map((item, key) => (
+                      <div className="row mt-4 ms-4 me-4" key={key}>
+                        <div className="col-md-2 col-lg-2 col-xs-2 col-sm-2">
+                          <img src={item.logo} style={{ width: `10vh` }} />
                         </div>
-                        <p>{item?.description}</p>
+                        <div className="col col-md-10 col-lg-10 col-xs-8 col-sm-8">
+                          <h5 className="mb-0">
+                            {item?.position ? item?.position : "No position"}
+                          </h5>
+                          <p className="mb-0">
+                            {item?.company ? item?.company : "No company"}
+                          </p>
+                          <div className="d-flex align-items-center">
+                            <p className="text-secondary">{item?.date}</p>
+                          </div>
+                          <p>
+                            {" "}
+                            {item?.description
+                              ? item?.description
+                              : "No company"}
+                          </p>
 
-                        {key === jobProfile.length - 1 ? null : <hr />}
+                          {key === item?.job_history?.length - 1 ? null : (
+                            <hr />
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  ) : (
+                    <h1 className="text-center text-secondary m-5">
+                      Pengalaman Kerja Kosong
+                    </h1>
+                  )}
                 </div>
               </div>
             </div>
@@ -310,37 +283,57 @@ function Profile() {
   );
 }
 
-// export async function getStaticPaths() {
-//   let currentPage = 1;
-//   let paths = [];
+export async function getStaticPaths() {
+  // Fetch all profiles from your API
+  const res = await axios.get(
+    `${process.env.NEXT_PUBLIC_APP_BASE_URL}/job/all`
+  );
+  const profiles = res.data?.data;
+  // console.log(profiles);
+  // Generate the paths for the static pages
+  const paths = profiles.map((profile) => ({
+    params: { id: profile.id.toString() },
+  }));
 
-//   while (true) {
-//     try {
-//       const response = await axios.get(
-//         `${process.env.NEXT_PUBLIC_APP_BASE_URL}/job?page=${currentPage}`
-//       );
-//       const { rows, total_page } = response.data.data || {};
+  return { paths, fallback: false };
+}
 
-//       if (Array.isArray(rows)) {
-//         const newPaths = rows.map((post) => ({
-//           params: { id: post?.id?.toString() },
-//         }));
+export async function getStaticProps({ params }) {
+  // Fetch all profiles again
+  const res = await axios.get(
+    `${process.env.NEXT_PUBLIC_APP_BASE_URL}/job/all`
+  );
+  const profiles = res.data?.data;
+  // console.log(profiles);
 
-//         paths = [...paths, ...newPaths];
-//       }
+  // Find the specific profile data using the ID
+  const profileData = profiles.find(
+    (profile) => profile.id.toString() === params.id
+  );
 
-//       if (currentPage >= total_page) {
-//         break;
-//       }
+  if (!profileData) {
+    return {
+      props: {
+        profile: null,
+      },
+      revalidate: 10,
+    };
+  }
 
-//       currentPage++;
-//     } catch (error) {
-//       console.error("API request failed:", error);
-//       break;
-//     }
-//   }
-//   console.log(paths);
-//   return { paths, fallback: "blocking" };
+  return {
+    props: { profile: profileData },
+    revalidate: 10,
+  };
+}
+
+// convert this page into html
+// export async function getStaticProps() {
+//   return {
+//     props: {
+//       id: null,
+//     },
+//     revalidate: 10,
+//   };
 // }
 
 export default Profile;

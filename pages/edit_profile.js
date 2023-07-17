@@ -153,6 +153,7 @@ function Edit_profile() {
   //input skills
   const [input, setInput] = useState("");
   const [skills, setSkills] = useState([]);
+  console.log(skills);
   const [suggestions, setSuggestions] = useState([
     "HTML",
     "CSS",

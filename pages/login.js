@@ -16,6 +16,7 @@ function Login() {
   const auth = useSelector((state) => state.auth);
   const status = useSelector((state) => state.auth.status);
   const messages = useSelector((state) => state.auth.messages);
+  console.log(messages);
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleLogin(event) {
