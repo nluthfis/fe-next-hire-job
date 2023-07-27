@@ -60,8 +60,8 @@ function Login() {
             <div className="d-flex flex-column justify-content-center">
               <h2 className="m-5 mb-0">Halo, Pewpeople</h2>
               <p className="m-5 mt-2 mb-3">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
-                euismod ipsum et dui rhoncus auctor.
+                Selamat Datang Kembali, Silahkan masuk ke akun anda untuk dapat
+                menggunakan layanan kami secara maksimal
               </p>
               {messages && (
                 <div className="alert alert-danger ms-5" role="alert">

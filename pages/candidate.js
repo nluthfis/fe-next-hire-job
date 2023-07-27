@@ -17,11 +17,8 @@ function Job_list(props) {
   const router = useRouter();
   const [showDropdown, setShowDropdown] = useState(false);
   const [sortOption, setSortOption] = useState("Sort");
+  const sortOptions = ["Nama", "Skill", "Lokasi"];
   const dispatch = useDispatch();
-  const handleSortOptionClick = (option) => {
-    setSortOption(option);
-    setShowDropdown(false);
-  };
   // this will be used when using api per pages
   // const [pageStart, setPageStart] = useState(0);
   // const [currentPage, setCurrentPage] = useState(1);
@@ -39,18 +36,47 @@ function Job_list(props) {
 
   // server rendering code here
   const [data, setData] = React.useState(props?.request?.data);
-
+  console.log(data);
   const [currentPage, setCurrentPage] = React.useState(0);
   const [firstPageInSet, setFirstPageInSet] = React.useState(0);
 
+  const [searchText, setSearchText] = useState("");
+  const [filteredData, setFilteredData] = useState(data);
+  const handleSearchInputChange = (event) => {
+    setSearchText(event.target.value);
+  };
+
+  const handleSortOptionClick = (option) => {
+    setSortOption(option);
+    setShowDropdown(false);
+
+    // Filter the data based on the selected option and search text
+    let sortedData = [];
+    if (option === "Nama") {
+      sortedData = data.filter((item) =>
+        item.fullname.toLowerCase().includes(searchText.toLowerCase())
+      );
+      // Update the filtered data
+      setFilteredData(sortedData);
+    } else if (option === "Skill") {
+      sortedData = data.filter((item) =>
+        item.skills.some((skill) =>
+          skill.toLowerCase().includes(searchText.toLowerCase())
+        )
+      );
+      // Update the filtered data
+      setFilteredData(sortedData);
+    }
+  };
+  console.log(filteredData);
   const itemsPerPage = 5;
 
-  const profiles = data.slice(
+  const profiles = filteredData.slice(
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage
   );
 
-  const totalPages = Math.ceil(data.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
   const handleNext = () => {
     if (currentPage < totalPages - 1) {
@@ -69,6 +95,10 @@ function Job_list(props) {
       }
     }
   };
+
+  // const filteredProfiles = profiles.filter((profile) =>
+  //   profile.fullname.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   // const removeData = (data, id) => {
   //   return data.filter((obj) => obj.id !== id);
@@ -127,14 +157,16 @@ function Job_list(props) {
                 className="form-control form-control-lg border-primary shadow-lg bg-body-tertiary "
                 aria-label="Text input with dropdown button "
                 placeholder="search for any skill "
+                value={searchText}
+                onChange={handleSearchInputChange}
               />
-              <div className="action d-inline-flex justify-content-center align-items-center">
+              <div className="action d-inline-flex justify-content-center align-items-center ms-2 me-2">
                 <div
                   className="vertical-line"
                   style={{ borderLeft: "4px solid black" }}
                 ></div>
 
-                <div className="btn-group">
+                <div className="btn-group ms-2 me-2">
                   <button
                     className="btn btn-outline-primary dropdown-toggle"
                     type="button"
@@ -145,55 +177,22 @@ function Job_list(props) {
 
                   {showDropdown && (
                     <div className="dropdown-menu show">
-                      <a
-                        className="dropdown-item"
-                        href="#"
-                        onClick={() =>
-                          handleSortOptionClick("Sortir Berdasar Nama")
-                        }
-                      >
-                        Sortir berdasar nama
-                      </a>
-                      <a
-                        className="dropdown-item"
-                        href="#"
-                        onClick={() => handleSortOptionClick("Another action")}
-                      >
-                        Sortir berdasar skill
-                      </a>
-                      <a
-                        className="dropdown-item"
-                        href="#"
-                        onClick={() =>
-                          handleSortOptionClick("Sortir berdasar lokasi")
-                        }
-                      >
-                        Sortir berdasar lokasi
-                      </a>
-                      <a
-                        className="dropdown-item"
-                        href="#"
-                        onClick={() =>
-                          handleSortOptionClick("Sortir berdasar freelance")
-                        }
-                      >
-                        Sortir berdasar freelance
-                      </a>
-                      <a
-                        className="dropdown-item"
-                        href="#"
-                        onClick={() =>
-                          handleSortOptionClick("Sortir berdasar fulltime")
-                        }
-                      >
-                        Sortir berdasar fulltime
-                      </a>
+                      {sortOptions.map((option, index) => (
+                        <div key={index}>
+                          <a
+                            className="dropdown-item"
+                            href="#"
+                            onClick={() => handleSortOptionClick(option)}
+                          >
+                            {option}
+                          </a>
+                        </div>
+                      ))}
                       <a
                         className="dropdown-item"
                         href="#"
                         onClick={() => {
                           setShowDropdown(false);
-                          setSortOption("Sort");
                         }}
                       >
                         Close
@@ -205,6 +204,7 @@ function Job_list(props) {
                   className="btn btn-primary "
                   type="button"
                   id="button-addon2"
+                  onClick={() => handleSortOptionClick(sortOption)}
                 >
                   Search
                 </button>

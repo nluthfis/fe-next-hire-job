@@ -9,7 +9,12 @@ export default function Home() {
   const dispatch = useDispatch();
   const state = useSelector((state) => state);
 
-  // console.log(state);
+  const list = [
+    "Jaringan luas",
+    "Rekam jejak terbukti",
+    "Jaminan kualitas",
+    "Dukungan berkelanjutan",
+  ];
 
   const handleCounter = () => {
     dispatch(increment());
@@ -25,8 +30,9 @@ export default function Home() {
                 Talenta terbaik negri untuk perubahan revolusi 4.0
               </h1>
               <p className="desc me-5 mb-5 ms-5">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
-                euismod ipsum et dui rhoncus auctor.
+                Dorongan revolusi industri 4.0 mendorong kita untuk
+                mempersiapkan lingkungan kerja yang lebih baik serta sumber daya
+                manusia yang cepat dan tepat.
               </p>
               <Link href="/candidate">
                 <button className="btn btn-primary btn-lg w-50 ms-5 mb-2">
@@ -81,9 +87,9 @@ export default function Home() {
 
               <div className="col-md-6 col-lg-6 col-sm-12 col-xs-12">
                 <h2 className="text-primary m-5 mt-5 mb-4">
-                  Kenapa harus mencari tallent di peworld
+                  Kenapa harus mencari tallent di Peworld
                 </h2>
-                {[...new Array(4)].map((item, key) => (
+                {list.map((item, key) => (
                   <div className="d-flex align-items-center mt-0" key={key}>
                     <Image
                       className="ms-5 mt-4 mb-0 "
@@ -92,9 +98,7 @@ export default function Home() {
                       width={25}
                       height={25}
                     />
-                    <p className="ms-5 mt-4 mb-0">
-                      Lorem ipsum dolor sit amet.
-                    </p>
+                    <p className="ms-5 mt-4 mb-0">{item}</p>
                   </div>
                 ))}
               </div>
@@ -106,8 +110,9 @@ export default function Home() {
             <div className="col-md-6 col-lg-6 col-sm-12 col-xs-12 d-flex flex-column justify-content-center order-2 order-md-1">
               <h2 className="text-primary m-5 mt-2 mb-2">Skill Tallent</h2>
               <p className="ms-5">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
-                euismod ipsum et dui rhoncus auctor.
+                Terdapat berbagai macam kemampuan unik yang di miliki programmer
+                agar dapat menulis kode yang bersih, efisien, dan tahan lama.
+                Keterampilan tersebut meliputi:
               </p>
               <div className="row">
                 <div className="col-md-6 col-lg-6 col-xs-5 col-sm-5">

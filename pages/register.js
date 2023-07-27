@@ -70,8 +70,7 @@ function Register() {
               <div className="d-flex flex-column justify-content-center">
                 <h2 className="m-5 mt-2 mb-0">Halo, Pewpeople</h2>
                 <p className="m-5 mt-1 mb-2">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
-                  euismod ipsum et dui rhoncus auctor.
+                  Selamat datang, Silahkan daftar untuk melanjutkan!
                 </p>
 
                 <form onSubmit={handleSubmit}>
@@ -180,7 +179,7 @@ function Register() {
                   </div>
                   <div className="m-5 mt-0 mb-0">
                     <label htmlFor="inputPassword2" className="form-label">
-                      Confirm Password
+                      Konfirmasi Password
                     </label>
                     <input
                       type="password"

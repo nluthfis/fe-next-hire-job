@@ -11,9 +11,9 @@ function Footer() {
               <img className="mt-5 " src="/logo_white.png" alt="Image-desc" />
               <div className="text-md-start">
                 <p className="me-5 mt-4 mb-5 text-light ">
-                  Lorem ipsum dolor sit amet,consectetur
-                  <br /> adipiscing elit. In euismod ipsum et dui <br /> rhoncus
-                  auctor.
+                  Peworld menawarkan solusi untuk <br />
+                  mencari pekerja dan pekerjaan yang <br />
+                  berkualitas.
                 </p>
               </div>
               <hr
@@ -21,7 +21,7 @@ function Footer() {
                 style={{ height: "5px", width: "100%" }}
               />
               <div className="d-flex justify-content-between text-light">
-                <p> 2020 Pewworld. All right reserved</p>
+                <p> 2023 Peworld. All right reserved</p>
                 <div className="d-flex">
                   <p className="me-5"> Telepon </p>
                   <p> Email </p>

@@ -24,7 +24,16 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const [isNavCollapsed, setIsNavCollapsed] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mailDropdownOpen, setMailDropdownOpen] = useState(false);
+  const [notificationDropdownOpen, setNotificationDropdownOpen] =
+    useState(false);
+  const toggleMailDropdown = () => {
+    setMailDropdownOpen(!mailDropdownOpen);
+  };
 
+  const toggleNotificationDropdown = () => {
+    setNotificationDropdownOpen(!notificationDropdownOpen);
+  };
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
@@ -68,24 +77,42 @@ const Navbar = () => {
             <div className="navbar-nav ms-auto">
               {isAuthenticated ? (
                 <div className="d-flex align-items-center">
-                  <div className="m-2">
+                  <div className="me-4">
                     <FontAwesomeIcon
                       icon={faEnvelope}
                       size="xl"
-                      style={{ color: "#5e50a1" }}
+                      style={{ color: "#5e50a1", cursor: "pointer" }}
+                      onClick={toggleMailDropdown}
                     />
+                    {mailDropdownOpen && (
+                      <div
+                        className="dropdown-menu show text-left"
+                        style={{ position: "absolute", right: `3vh` }}
+                      >
+                        <div className="ms-2">No new mail</div>
+                      </div>
+                    )}
                   </div>
-                  <div className="m-2">
+                  <div className="me-4">
                     <FontAwesomeIcon
                       icon={faBell}
                       size="xl"
-                      style={{ color: "#5e50a1" }}
+                      style={{ color: "#5e50a1", cursor: "pointer" }}
+                      onClick={toggleNotificationDropdown}
                     />
+                    {notificationDropdownOpen && (
+                      <div
+                        className="dropdown-menu show text-left"
+                        style={{ position: "absolute", right: `3vh` }}
+                      >
+                        <div className="ms-2">No new notifications</div>
+                      </div>
+                    )}
                   </div>
 
                   <div style={{ position: "relative" }}>
                     <img
-                      className="m-2 rounded-circle object-fit-cover"
+                      className="rounded-circle object-fit-cover"
                       src={photo}
                       style={{ width: `5vh`, height: `5vh` }}
                       onClick={toggleDropdown}
@@ -93,7 +120,7 @@ const Navbar = () => {
                     {dropdownOpen && (
                       <div
                         className="dropdown-menu show me-5 text-left"
-                        style={{ position: "absolute", right: `-8vh` }}
+                        style={{ position: "absolute", right: `-5vh` }}
                       >
                         <Link href="/find_job">
                           <div className="ms-2">
