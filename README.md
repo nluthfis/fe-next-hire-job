@@ -45,6 +45,8 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 - [Axios](https://axios-http.com/)
 - [Dotenv](https://www.npmjs.com/package/dotenv)
 
+## Documentation
+
 <table>
 <tr>
 <td><img width="350px" src="./documentation/login.jpg" border="0" alt="login" /></td>
