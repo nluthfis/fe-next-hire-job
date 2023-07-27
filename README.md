@@ -37,7 +37,13 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 - Server side rendering
 - Incremental Static Regeneration
 
-Styled with Styled Components using Bootstrap
+## Below are lists of modules used in this application:
+
+- [Next.js](https://nextjs.org/)
+- [Redux](https://redux.js.org/)
+- [Bootstrap](https://getbootstrap.com/)
+- [Axios](https://axios-http.com/)
+- [Dotenv](https://www.npmjs.com/package/dotenv)
 
 <table>
 <tr>
