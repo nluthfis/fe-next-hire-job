@@ -36,10 +36,8 @@ function Job_list(props) {
 
   // server rendering code here
   const [data, setData] = React.useState(props?.request?.data);
-  console.log(data);
   const [currentPage, setCurrentPage] = React.useState(0);
   const [firstPageInSet, setFirstPageInSet] = React.useState(0);
-
   const [searchText, setSearchText] = useState("");
   const [filteredData, setFilteredData] = useState(data);
   const handleSearchInputChange = (event) => {
@@ -53,28 +51,30 @@ function Job_list(props) {
     // Filter the data based on the selected option and search text
     let sortedData = [];
     if (option === "Nama") {
-      sortedData = data.filter((item) =>
-        item.fullname.toLowerCase().includes(searchText.toLowerCase())
+      sortedData = data.filter(
+        (item) =>
+          item.fullname.toLowerCase().includes(searchText.toLowerCase()) &&
+          item.id !== user?.id
       );
       // Update the filtered data
       setFilteredData(sortedData);
     } else if (option === "Skill") {
       sortedData = data.filter((item) =>
-        item.skills.some((skill) =>
-          skill.toLowerCase().includes(searchText.toLowerCase())
+        item.skills.some(
+          (skill) =>
+            skill.toLowerCase().includes(searchText.toLowerCase()) &&
+            item.id !== user?.id
         )
       );
       // Update the filtered data
       setFilteredData(sortedData);
     }
   };
-  console.log(filteredData);
   const itemsPerPage = 5;
 
-  const profiles = filteredData.slice(
-    currentPage * itemsPerPage,
-    (currentPage + 1) * itemsPerPage
-  );
+  const profiles = filteredData
+    .filter((item) => item.id !== user?.id)
+    .slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
@@ -273,7 +273,7 @@ function Job_list(props) {
             ))}
             <div className="d-flex justify-content-center mt-4 mb-4">
               <button
-                className="btn btn-outline-primary"
+                className="btn btn-outline-primary "
                 onClick={handlePrev}
                 disabled={currentPage === 0} // Disable 'Prev' button on the first page
               >
@@ -288,8 +288,8 @@ function Job_list(props) {
                       onClick={() => setCurrentPage(pageNumber)}
                       className={`btn ${
                         currentPage === pageNumber
-                          ? "btn-primary"
-                          : "btn-outline-primary"
+                          ? "btn-primary ms-2"
+                          : "btn-outline-primary ms-2"
                       }`}
                     >
                       {pageNumber + 1}
@@ -299,7 +299,7 @@ function Job_list(props) {
                 return null;
               })}
               <button
-                className="btn btn-outline-primary"
+                className="btn btn-outline-primary ms-2"
                 onClick={handleNext}
                 disabled={currentPage === totalPages - 1} // Disable 'Next' button on the last page
               >

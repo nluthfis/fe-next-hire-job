@@ -81,13 +81,10 @@ function Edit_profile() {
         description: description || "",
         domicile: domicile || "",
       });
-      setIsLoading(false);
     }
   }, [user?.data]);
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
-    setIsLoading(true);
     try {
       await axios.patch(
         `${process.env.NEXT_PUBLIC_APP_BASE_URL}/profile`,
@@ -103,12 +100,9 @@ function Edit_profile() {
         }
       );
       dispatch(setUser(response?.data?.data));
-
       router.replace("/profile");
     } catch (error) {
       console.error(error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -121,7 +115,7 @@ function Edit_profile() {
   const [previewSrc, setPreviewSrc] = useState();
 
   const submitHandler = async (event) => {
-    event.preventDefault();
+    // event.preventDefault();
 
     const formImage = new FormData();
     formImage.append("photo", selectedFile);
@@ -140,7 +134,7 @@ function Edit_profile() {
       dispatch(setUser(response?.data?.data));
       router.replace("/profile");
     } catch (error) {
-      console.error("Axios error:", error);
+      console.log(error);
     }
   };
 
@@ -153,7 +147,6 @@ function Edit_profile() {
   //input skills
   const [input, setInput] = useState("");
   const [skills, setSkills] = useState([]);
-  console.log(skills);
   const [suggestions, setSuggestions] = useState([
     "HTML",
     "CSS",
@@ -162,6 +155,77 @@ function Edit_profile() {
     "MySql",
     "Vue",
     "React",
+    "Node",
+    "Express",
+    "MongoDB",
+    "Django",
+    "Laravel",
+    "PHP",
+    "Javascript",
+    "Java",
+    "C++",
+    "C#",
+    "C",
+    "Ruby",
+    "Go",
+    "Swift",
+    "Kotlin",
+    "React Native",
+    "Flutter",
+    "Dart",
+    "Typescript",
+    "Bootstrap",
+    "Tailwind",
+    "Sass",
+    "Less",
+    "Material UI",
+    "Chakra UI",
+    "Ant Design",
+    "Figma",
+    "Adobe XD",
+    "Adobe Photoshop",
+    "Adobe Illustrator",
+    "Adobe Premiere",
+    "Adobe After Effect",
+    "Sketch",
+    "Invision",
+    "Framer",
+    "Zeplin",
+    "Marvel",
+    "Invision Studio",
+    "Inkscape",
+    "NextJS",
+    "Gatsby",
+    "NuxtJS",
+    "Svelte",
+    "Strapi",
+    "Wordpress",
+    "Shopify",
+    "WooCommerce",
+    "JQuery",
+    "Redux",
+    "GraphQL",
+    "Apollo",
+    "REST API",
+    "Firebase",
+    "Heroku",
+    "Netlify",
+    "Vercel",
+    "Digital Ocean",
+    "AWS",
+    "Azure",
+    "Google Cloud",
+    "Linux",
+    "Windows",
+    "MacOS",
+    "Android",
+    "IOS",
+    "Arduino",
+    "Raspberry Pi",
+    "Docker",
+    "Kubernetes",
+    "Jenkins",
+    "Circle CI",
   ]);
 
   const handleInputChange = (value) => {
@@ -195,7 +259,6 @@ function Edit_profile() {
       );
 
       dispatch(setUser(response?.data?.data));
-      router.replace("/profile");
     } catch (error) {
       console.error(error);
     }
@@ -262,18 +325,14 @@ function Edit_profile() {
 
   const handleJobSubmit = async (event) => {
     event.preventDefault();
-    setIsLoading(true);
     const formData = new FormData();
     formData.append("position", jobState.position);
     formData.append("company", jobState.company);
-
-    // Combine the month and year values into the required format
     const date = `${jobState.month}-${jobState.year}`;
     formData.append("date", date);
-
     formData.append("description", jobState.description);
     formData.append("photo", photo);
-
+    setIsLoading(true);
     try {
       await axios.post(
         `${process.env.NEXT_PUBLIC_APP_BASE_URL}/job`,
@@ -294,8 +353,16 @@ function Edit_profile() {
           },
         }
       );
+      setJobState({
+        position: "",
+        company: "",
+        photo: "",
+        month: "",
+        year: "",
+        description: "",
+      });
       dispatch(setUser(response?.data?.data));
-      router.replace("/profile");
+      setActiveTab("pengalaman-kerja");
     } catch (error) {
       console.error(error);
     } finally {
@@ -321,7 +388,6 @@ function Edit_profile() {
           },
         }
       );
-
       dispatch(setUser(response?.data?.data));
     } catch (error) {
       console.error(error);
@@ -329,6 +395,41 @@ function Edit_profile() {
       setIsLoading(false);
     }
   };
+
+  const handleEditAll = async (event) => {
+    setIsLoading(true);
+    try {
+      await handleSubmit(); // Edit profile
+      await handleSubmitSkills(); // Edit skills
+      setIsLoading(false);
+      router.replace("/profile");
+    } catch (error) {
+      console.error(error);
+      setIsLoading(false);
+    }
+  };
+
+  // const handleEditAll = async (event) => {
+  //   return new Promise(async (resolve, reject) => {
+  //     setIsLoading(true);
+  //     const editProfile = async () => {
+  //       await handleSubmit();
+  //     };
+  //     const editSkills = async () => {
+  //       skills?.length === 0 ? null : await handleSubmitSkills();
+  //     };
+  //     await Promise.all([editProfile(), editSkills()])
+  //       .then(() => {
+  //         setIsLoading(false);
+  //         resolve();
+  //         router.replace("/profile");
+  //       })
+  //       .catch((err) => {
+  //         setIsLoading(false);
+  //         reject(err);
+  //       });
+  //   });
+  // };
 
   return (
     <div>
@@ -402,6 +503,15 @@ function Edit_profile() {
                   </p>
                 </div>
               </div>
+            </div>
+            <div className="col mt-2">
+              <button
+                className="btn btn-primary w-100"
+                type="button"
+                onClick={handleEditAll}
+              >
+                {isLoading ? "Loading..." : "Simpan"}
+              </button>
             </div>
           </div>
           <div className="col-md-9 col-lg-9 col-xs-12 col-sm-12 bg-light">
@@ -496,7 +606,7 @@ function Edit_profile() {
                       style={{ height: `15vh` }}
                     />
                   </div>
-                  <div className="ms-5 me-5">
+                  {/* <div className="ms-5 me-5">
                     <button
                       type="submit"
                       disabled={isLoading}
@@ -504,7 +614,7 @@ function Edit_profile() {
                     >
                       {isLoading ? "Loading..." : "Simpan"}
                     </button>
-                  </div>
+                  </div> */}
                 </form>
               </div>
             </div>
@@ -529,15 +639,15 @@ function Edit_profile() {
                 </div>
                 <hr />
                 {/* <div className="d-inline ms-5 mb-2">
-                  {Array.isArray(skills) &&
-                    skills.map((item, key) => (
-                      <span key={key} className="badge bg-primary m-1 p-2">
-                        {item}
-                      </span>
-                    ))}
-                </div> */}
-                <div className="d-flex">
-                  <div className="col-md-9 col-lg-9 m-5 mt-2 mb-3">
+      {Array.isArray(skills) &&
+        skills.map((item, key) => (
+          <span key={key} className="badge bg-primary m-1 p-2">
+            {item}
+          </span>
+        ))}
+    </div> */}
+                <div className="row d-flex justify-content-center">
+                  <div className="col-md-11 col-lg-11 m-5 mt-2 mb-3">
                     <Select
                       isMulti
                       name="skills"
@@ -548,18 +658,19 @@ function Edit_profile() {
                       onChange={handleAddSkill}
                     />
                   </div>
-                  <div className="col-3 w-100 mt-2">
+                  {/* <div className="col-md-3 col-lg-3 mt-2">
                     <button
-                      className="btn btn-primary"
+                      className="btn btn-primary w-100"
                       type="button"
                       onClick={handleSubmitSkills}
                     >
                       Submit
                     </button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
+
             <div className="card mt-3">
               <div className="card">
                 <h4 className="m-3">Pengalaman Kerja</h4>
@@ -721,6 +832,7 @@ function Edit_profile() {
                           <button
                             type="submit"
                             className="btn btn-warning w-100"
+                            disabled={isLoading}
                           >
                             {isLoading
                               ? "Memproses"
@@ -747,7 +859,6 @@ function Edit_profile() {
                             <p className="mb-0">{job.company}</p>
                             <div className="d-flex align-items-center">
                               <p className="text-secondary">{job.date}</p>
-                              <p className="text-secondary ms-5">6 months</p>
                             </div>
                             <p>{job.description}</p>
                           </div>

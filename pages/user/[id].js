@@ -19,14 +19,17 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 function Profile({ profile }) {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState("pengalaman-kerja");
+  const { query } = router;
+  const id = parseInt(query?.id);
+  const dispatch = useDispatch();
+
+  console.log(profile);
   if (!profile) {
     return <div>No profile found</div>;
   }
-  const [activeTab, setActiveTab] = useState("pengalaman-kerja");
-  const { query } = useRouter();
-  const id = parseInt(query?.id);
-  const dispatch = useDispatch();
-  const router = useRouter();
+
   function capitalizeWords(str) {
     return str.replace(/\b\w/g, function (char) {
       return char.toUpperCase();
@@ -39,10 +42,10 @@ function Profile({ profile }) {
   //   state?.job?.job?.find((job) => job.id === id)
   // );
 
-  // const hireHandle = (profile) => {
-  //   dispatch(sendHireTo(profile));
-  //   router.replace("/hire");
-  // };
+  const hireHandle = (profile) => {
+    dispatch(sendHireTo(profile));
+    router.replace("/hire");
+  };
 
   // useEffect(() => {
   //   if (auth.token === null) {
