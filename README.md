@@ -111,4 +111,4 @@ Check out https://fe-next-hire-job.vercel.app for more details.
 
 :rocket: [`Backend`](https://github.com/nluthfis/hire_job_be)
 
-:rocket: [`Demo`](fe-next-hire-job.vercel.app)
+:rocket: [`Demo`](https://fe-next-hire-job.vercel.app/)

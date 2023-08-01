@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useRouter } from "next/router";
@@ -6,6 +6,19 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faGithub,
+  faInstagram,
+  faGitlab,
+} from "@fortawesome/free-brands-svg-icons";
+import {
+  faLocationDot,
+  faBuilding,
+  faSuitcaseRolling,
+  faNoteSticky,
+  faEnvelope,
+} from "@fortawesome/free-solid-svg-icons";
 
 function Hire() {
   const { query } = useRouter();
@@ -17,10 +30,17 @@ function Hire() {
   const user = useSelector((state) => state?.hire?.data);
   const auth = useSelector((state) => state?.auth);
   const token = auth?.token;
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (auth.token === null) {
+      router.replace("/login");
+    }
+  }, [auth.status]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-
+    setIsLoading(true);
     await axios
       .post(
         `${process.env.NEXT_PUBLIC_APP_BASE_URL}/contact/${user?.id}`,
@@ -35,10 +55,18 @@ function Hire() {
       .then(() => {
         router.replace(`/user/${user?.id}`);
       })
-      .catch((response) => {
-        console.log(response);
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
+  function capitalizeWords(str) {
+    return str.replace(/\b\w/g, function (char) {
+      return char.toUpperCase();
+    });
+  }
   return (
     <>
       <Navbar />
@@ -55,19 +83,38 @@ function Hire() {
               />
               <div className="card-body">
                 <h5 className="card-title">{user?.fullname}</h5>
-                <p className="card-text">{user?.company}</p>
-                <div className="card-location mb-0 d-flex">
-                  <img
-                    className="me-2"
-                    src="/map-pin.png"
-                    width={`20`}
-                    height={`20`}
-                  />
-                  <p className="text-muted">{user?.domicile}</p>
+                <div className="d-flex align-items-center">
+                  <FontAwesomeIcon icon={faBuilding} />
+                  <p className="card-text ms-2 mb-0">
+                    {user?.company && user?.company !== "-"
+                      ? capitalizeWords(user?.company)
+                      : "Company tidak tersedia"}
+                  </p>
                 </div>
-
-                <p className="text-muted mb-2">{user?.job_tittle}</p>
-                <p className="text-muted mb-0">{user?.description}</p>
+                <div className="d-flex align-items-center">
+                  <FontAwesomeIcon icon={faLocationDot} />
+                  <p className="card-text ms-2 mb-0">
+                    {user?.domicile && user?.domicile !== "-"
+                      ? capitalizeWords(user?.domicile)
+                      : "Domisili tidak tersedia"}
+                  </p>
+                </div>
+                <div className="d-flex align-items-center">
+                  <FontAwesomeIcon icon={faSuitcaseRolling} />
+                  <p className="card-text ms-2 mb-0">
+                    {user?.job_tittle && user?.job_tittle !== "-"
+                      ? capitalizeWords(user?.job_tittle)
+                      : "Title tidak tersedia"}
+                  </p>
+                </div>
+                <div className="d-flex align-items-start">
+                  <FontAwesomeIcon icon={faNoteSticky} className="mt-1" />{" "}
+                  <p className="text-muted ms-2 mb-0 mt-0">
+                    {user?.description && user?.description !== "-"
+                      ? user?.description
+                      : "Description tidak tersedia"}
+                  </p>
+                </div>
               </div>
 
               <h5 className="card-title ms-3 mt-5">Skills</h5>
@@ -80,51 +127,16 @@ function Hire() {
                   ))}
                 </div>
               </div>
-              <div className="card-location mb-0 ms-3 mt-5 d-flex">
-                <img
-                  className="me-2"
-                  src="/mail.png"
-                  width={`20`}
-                  height={`20`}
-                />
-                <p className="text-muted">{user?.email}</p>
-              </div>
-              <div className="card-location mb-0 ms-3 d-flex">
-                <img
-                  className="me-2"
-                  src="/instagram.png"
-                  width={`20`}
-                  height={`20`}
-                />
-                <p className="text-muted">@Louist91</p>
-              </div>
-              <div className="card-location mb-0 ms-3 d-flex">
-                <img
-                  className="me-2"
-                  src="/github.png"
-                  width={`20`}
-                  height={`20`}
-                />
-                <p className="text-muted">@Louistommo</p>
-              </div>
-              <div className="card-location mb-5 ms-3 d-flex">
-                <img
-                  className="me-2"
-                  src="/gitlab.png"
-                  width={`20`}
-                  height={`20`}
-                />
-                <p className="text-muted">@Louistommo91</p>
+
+              <div className="d-flex align-items-center ms-3 mt-3 mb-5">
+                <FontAwesomeIcon icon={faEnvelope} />
+                <p className="text-muted ms-2 mb-0">{user?.email}</p>
               </div>
             </div>
           </div>
           <div className="col-md-9 col-lg-9 col-xs-12 col-sm-12">
             <div className="ms-5">
               <h4>Hubungi {user?.fullname}</h4>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
-                euismod ipsum et dui rhoncus auctor.
-              </p>
             </div>
 
             <hr />
@@ -186,7 +198,7 @@ function Hire() {
                   style={{ height: `15vh` }}
                 />
                 <button type="submit" className="btn btn-warning w-100 mt-4">
-                  Hire
+                  {isLoading ? "Loading..." : "Hire"}
                 </button>
               </div>
             </form>

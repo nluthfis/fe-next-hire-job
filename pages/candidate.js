@@ -27,6 +27,7 @@ function Job_list(props) {
 
   //this will be used to store the api data in redux
   const user = useSelector((state) => state?.user?.data);
+
   const auth = useSelector((state) => state?.auth);
   useEffect(() => {
     if (auth.token === null) {
@@ -35,9 +36,9 @@ function Job_list(props) {
   }, [auth.status]);
 
   // server rendering code here
-  const [data, setData] = React.useState(props?.request?.data);
-  const [currentPage, setCurrentPage] = React.useState(0);
-  const [firstPageInSet, setFirstPageInSet] = React.useState(0);
+  const [data, setData] = useState(props?.request?.data);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [firstPageInSet, setFirstPageInSet] = useState(0);
   const [searchText, setSearchText] = useState("");
   const [filteredData, setFilteredData] = useState(data);
   const handleSearchInputChange = (event) => {
@@ -47,8 +48,6 @@ function Job_list(props) {
   const handleSortOptionClick = (option) => {
     setSortOption(option);
     setShowDropdown(false);
-
-    // Filter the data based on the selected option and search text
     let sortedData = [];
     if (option === "Nama") {
       sortedData = data.filter(
@@ -56,7 +55,6 @@ function Job_list(props) {
           item.fullname.toLowerCase().includes(searchText.toLowerCase()) &&
           item.id !== user?.id
       );
-      // Update the filtered data
       setFilteredData(sortedData);
     } else if (option === "Skill") {
       sortedData = data.filter((item) =>
@@ -66,14 +64,13 @@ function Job_list(props) {
             item.id !== user?.id
         )
       );
-      // Update the filtered data
       setFilteredData(sortedData);
     }
   };
   const itemsPerPage = 5;
 
   const profiles = filteredData
-    .filter((item) => item.id !== user?.id)
+    .filter((item) => item.id !== (user?.id || (user && user.dataValues.id)))
     .slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
@@ -262,11 +259,9 @@ function Job_list(props) {
                     </div>
                   </div>
                   <div className="col-12 col-md-2 text-center text-md-right mt-sm-3 mt-xs-3">
-                    {/* this when in user page want to use the redux data */}
                     <Link href={`/user/${profile.id}`}>
                       <button className="btn btn-primary">Lihat Profile</button>
                     </Link>
-                    {/* this when use the next router */}
                   </div>
                 </div>
               </div>
@@ -275,7 +270,7 @@ function Job_list(props) {
               <button
                 className="btn btn-outline-primary "
                 onClick={handlePrev}
-                disabled={currentPage === 0} // Disable 'Prev' button on the first page
+                disabled={currentPage === 0}
               >
                 Prev
               </button>
