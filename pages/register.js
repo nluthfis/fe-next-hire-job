@@ -15,6 +15,7 @@ function Register() {
     phone: "",
   });
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const validatePasswords = () => {
     return formData.password === confirmPassword;
@@ -26,7 +27,7 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setIsLoading(true);
     let response = null;
 
     if (validatePasswords()) {
@@ -39,6 +40,8 @@ function Register() {
         router.push("/login");
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     } else {
       setErrMsg(response?.data?.message ?? "Password tidak sama");
@@ -190,7 +193,7 @@ function Register() {
                 </div>
                 <div className="m-5 mt-3 mb-0 d-grid">
                   <button type="submit" className="btn btn-warning btn-lg">
-                    Daftar
+                    {isLoading ? "Loading..." : "Daftar"}
                   </button>
                 </div>
               </form>

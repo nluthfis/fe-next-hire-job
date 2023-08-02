@@ -49,15 +49,30 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 <table>
 <tr>
+  <td>Login</td>
+  <td>Register</td>
+<tr>
 <td><img width="350px" src="./documentation/login.jpg" border="0" alt="login" /></td>
     <td> <img width="350px" src="./documentation/register.jpg" border="0"  alt="Register" /></td>
 </tr>
+<tr>
+  <td>home</td>
+  <td>candidate</td>
+<tr>
 <td><img width="350px" src="./documentation/home.jpg" border="0" alt="home" /></td>
     <td> <img width="350px" src="./documentation/candidate.jpg" border="0"  alt="candidate" /></td>
 </tr>
+<tr>
+  <td>profile</td>
+  <td>otheruser</td>
+<tr>
 <td><img width="350px" src="./documentation/profile.jpg" border="0" alt="profile" /></td>
     <td> <img width="350px" src="./documentation/otheruser.jpg" border="0"  alt="otheruser" /></td>
 </tr>
+<tr>
+  <td>editprofile</td>
+  <td>findjob</td>
+<tr>
 <td><img width="350px" src="./documentation/editProfile.jpg" border="0" alt="editprofile" /></td>
     <td> <img width="350px" src="./documentation/findJob.jpg" border="0"  alt="findjob" /></td>
 </tr>

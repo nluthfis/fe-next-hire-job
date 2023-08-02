@@ -17,8 +17,7 @@ function Job_list(props) {
   const router = useRouter();
   const [showDropdown, setShowDropdown] = useState(false);
   const [sortOption, setSortOption] = useState("Sort");
-  const sortOptions = ["Nama", "Skill", "Lokasi"];
-  const dispatch = useDispatch();
+  const sortOptions = ["Nama", "Skill"];
   // this will be used when using api per pages
   // const [pageStart, setPageStart] = useState(0);
   // const [currentPage, setCurrentPage] = useState(1);
@@ -27,16 +26,17 @@ function Job_list(props) {
 
   //this will be used to store the api data in redux
   const user = useSelector((state) => state?.user?.data);
-
   const auth = useSelector((state) => state?.auth);
+
   useEffect(() => {
     if (auth.token === null) {
       router.replace("/login");
     }
-  }, [auth.status]);
+  }, [auth.token, router]);
 
   // server rendering code here
   const [data, setData] = useState(props?.request?.data);
+  console.log(data);
   const [currentPage, setCurrentPage] = useState(0);
   const [firstPageInSet, setFirstPageInSet] = useState(0);
   const [searchText, setSearchText] = useState("");
@@ -44,6 +44,9 @@ function Job_list(props) {
   const handleSearchInputChange = (event) => {
     setSearchText(event.target.value);
   };
+  console.log(data);
+  console.log(filteredData);
+  console.log(searchText);
 
   const handleSortOptionClick = (option) => {
     setSortOption(option);
@@ -65,8 +68,19 @@ function Job_list(props) {
         )
       );
       setFilteredData(sortedData);
+    } else if (option === "Sort") {
+      sortedData = data.filter(
+        (item) =>
+          item.fullname.toLowerCase().includes(searchText.toLowerCase()) ||
+          (item.skills.some((skill) =>
+            skill.toLowerCase().includes(searchText.toLowerCase())
+          ) &&
+            item.id !== user?.id)
+      );
+      setFilteredData(sortedData);
     }
   };
+
   const itemsPerPage = 5;
 
   const profiles = filteredData
@@ -136,6 +150,11 @@ function Job_list(props) {
   // for (let i = 1; i <= totalPages; i++) {
   //   pageNumbers.push(i);
   // }
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleSortOptionClick(sortOption);
+    }
+  };
 
   return (
     <>
@@ -153,9 +172,10 @@ function Job_list(props) {
                 type="text"
                 className="form-control form-control-lg border-primary shadow-lg bg-body-tertiary "
                 aria-label="Text input with dropdown button "
-                placeholder="search for any skill "
+                placeholder="Search for any skill "
                 value={searchText}
                 onChange={handleSearchInputChange}
+                onKeyDown={handleKeyDown}
               />
               <div className="action d-inline-flex justify-content-center align-items-center ms-2 me-2">
                 <div
@@ -207,65 +227,74 @@ function Job_list(props) {
                 </button>
               </div>
             </div>
-
-            {profiles.map((profile, index) => (
-              <div className="card shadow-lg" key={index}>
-                <div className="row align-items-center mt-3 mb-3 ms-3">
-                  <div className="col-12 col-md-2 text-center">
-                    <img
-                      src={profile?.photo || "/default_photo.jpg"}
-                      alt="profile"
-                      className="img-fluid rounded-circle object-fit-cover"
-                      style={{ width: `20vh`, height: `20vh` }}
-                    />
-                  </div>
-                  <div className="col-12 col-md-8 text-center text-md-start text-lg-start">
-                    <h5>
-                      {profile?.fullname
-                        ? profile?.fullname.charAt(0).toUpperCase() +
-                          profile?.fullname.slice(1)
-                        : "Nama tidak tersedia"}
-                    </h5>
-
-                    <div className="d-flex align-items-center justify-content-center justify-content-md-start">
-                      <FontAwesomeIcon icon={faSuitcaseRolling} />
-                      <p className="m-0 ms-2 text-secondary">
-                        {profile?.job_title && profile.job_title !== "-"
-                          ? profile.job_title
-                          : "Job title tidak tersedia"}
-                      </p>
+            {profiles.length === 0 ? (
+              <p>Pencarian tidak ditemukan</p>
+            ) : (
+              profiles.map((profile, index) => (
+                <div className="card shadow-lg" key={index}>
+                  <div className="row align-items-center mt-3 mb-3 ms-3">
+                    <div className="col-12 col-md-2 text-center">
+                      <img
+                        src={profile?.photo || "/default_photo.jpg"}
+                        alt="profile"
+                        className="img-fluid rounded-circle object-fit-cover"
+                        style={{ width: `20vh`, height: `20vh` }}
+                      />
                     </div>
+                    <div className="col-12 col-md-8 text-center text-md-start text-lg-start text-capitalize">
+                      <h5>
+                        {profile?.fullname
+                          ? profile?.fullname.charAt(0).toUpperCase() +
+                            profile?.fullname.slice(1)
+                          : "Nama tidak tersedia"}
+                      </h5>
 
-                    <div className="d-flex align-items-center justify-content-center justify-content-md-start">
-                      <FontAwesomeIcon icon={faLocationDot} />
-                      <p className="m-0 ms-2 text-secondary">
-                        {profile?.domicile && profile.domicile !== "-"
-                          ? profile.domicile
-                          : "Domisili tidak tersedia"}
-                      </p>
-                    </div>
-                    <div>
-                      {Array.isArray(profile.skills) ? (
-                        profile.skills.map((skill, key) => (
-                          <span key={key} className="badge bg-warning m-1 p-2">
-                            {skill}
+                      <div className="d-flex align-items-center justify-content-center justify-content-md-start">
+                        <FontAwesomeIcon icon={faSuitcaseRolling} />
+                        <p className="m-0 ms-2 text-secondary text-capitalize">
+                          {profile?.job_title && profile.job_title !== "-"
+                            ? profile.job_title
+                            : "Job title tidak tersedia"}
+                        </p>
+                      </div>
+
+                      <div className="d-flex align-items-center justify-content-center justify-content-md-start">
+                        <FontAwesomeIcon icon={faLocationDot} />
+                        <p className="m-0 ms-2 text-secondary text-capitalize">
+                          {profile?.domicile && profile.domicile !== "-"
+                            ? profile.domicile
+                            : "Domisili tidak tersedia"}
+                        </p>
+                      </div>
+                      <div>
+                        {Array.isArray(profile.skills) ? (
+                          profile.skills.map((skill, key) => (
+                            <span
+                              key={key}
+                              className="badge bg-warning m-1 p-2"
+                            >
+                              {skill}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="badge bg-warning m-1 p-2">
+                            {profile.skills}
                           </span>
-                        ))
-                      ) : (
-                        <span className="badge bg-warning m-1 p-2">
-                          {profile.skills}
-                        </span>
-                      )}
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div className="col-12 col-md-2 text-center text-md-right mt-sm-3 mt-xs-3">
-                    <Link href={`/user/${profile.id}`}>
-                      <button className="btn btn-primary">Lihat Profile</button>
-                    </Link>
+                    <div className="col-12 col-md-2 text-center text-md-right mt-sm-3 mt-xs-3">
+                      <Link href={`/user/${profile.id}`}>
+                        <button className="btn btn-primary">
+                          Lihat Profile
+                        </button>
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
+
             <div className="d-flex justify-content-center mt-4 mb-4">
               <button
                 className="btn btn-outline-primary "
