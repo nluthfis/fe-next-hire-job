@@ -396,40 +396,55 @@ function Edit_profile() {
     }
   };
 
-  const handleEditAll = async (event) => {
-    setIsLoading(true);
-    try {
-      await handleSubmit(); // Edit profile
-      await handleSubmitSkills(); // Edit skills
-      setIsLoading(false);
-      router.replace("/profile");
-    } catch (error) {
-      console.error(error);
-      setIsLoading(false);
-    }
-  };
-
   // const handleEditAll = async (event) => {
-  //   return new Promise(async (resolve, reject) => {
-  //     setIsLoading(true);
-  //     const editProfile = async () => {
-  //       await handleSubmit();
-  //     };
-  //     const editSkills = async () => {
-  //       skills?.length === 0 ? null : await handleSubmitSkills();
-  //     };
-  //     await Promise.all([editProfile(), editSkills()])
-  //       .then(() => {
-  //         setIsLoading(false);
-  //         resolve();
-  //         router.replace("/profile");
-  //       })
-  //       .catch((err) => {
-  //         setIsLoading(false);
-  //         reject(err);
-  //       });
-  //   });
+  //   setIsLoading(true);
+  //   try {
+  //     await handleSubmit(); // Edit profile
+  //     await handleSubmitSkills(); // Edit skills
+  //     setIsLoading(false);
+  //     router.replace("/profile");
+  //   } catch (error) {
+  //     console.error(error);
+  //     setIsLoading(false);
+  //   }
   // };
+
+  const handleEditAll = async (event) => {
+    return new Promise(async (resolve, reject) => {
+      setIsLoading(true);
+
+      const editProfile = async () => {
+        if (
+          !(
+            fullname === "" ||
+            company === "" ||
+            job_title === "" ||
+            phone === "" ||
+            description === "" ||
+            domicile === ""
+          )
+        ) {
+          await handleSubmit();
+        }
+      };
+
+      const editSkills = async () => {
+        if (skills && skills.length > 0) {
+          await handleSubmitSkills();
+        }
+      };
+
+      try {
+        await Promise.all([editProfile(), editSkills()]);
+        setIsLoading(false);
+        resolve();
+        router.replace("/profile");
+      } catch (err) {
+        setIsLoading(false);
+        reject(err);
+      }
+    });
+  };
 
   return (
     <div>
@@ -601,6 +616,7 @@ function Edit_profile() {
                       name="description"
                       id="description"
                       value={formState.description}
+                      maxLength={100}
                       onChange={handleChange}
                       placeholder="Tuliskan deskripsi singkat"
                       style={{ height: `15vh` }}
