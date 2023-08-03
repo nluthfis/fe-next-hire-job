@@ -1,6 +1,6 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import storage from "redux-persist/lib/storage";
-import { counterSlice } from "./reducers/counterSlice";
+// import { counterSlice } from "./reducers/counterSlice";
 import authSlice from "./reducers/authSlice";
 import userSlice from "./reducers/userSlice";
 import jobSlice from "./reducers/jobSlice";
@@ -23,7 +23,7 @@ const persistConfig = {
 };
 
 const rootReducer = combineReducers({
-  counter: counterSlice.reducer,
+  // counter: counterSlice.reducer,
   auth: authSlice,
   user: userSlice,
   // job: jobSlice,
