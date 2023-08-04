@@ -3,7 +3,7 @@
 
   <h3 align="center">HireJob Application</h3>
   <p align="center">
-    <a href="/">View Demo</a>
+    <a href="https://fe-next-hire-job.vercel.app/">View Demo</a>
   </p>
 </p>
 
