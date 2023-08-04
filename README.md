@@ -49,8 +49,8 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 <table>
 <tr>
-  <td>Login</td>
-  <td>Register</td>
+  <td>Login Pages</td>
+  <td>Register Pages</td>
 <tr>
 <td><img width="350px" src="./documentation/login.jpg" border="0" alt="login" /></td>
     <td> <img width="350px" src="./documentation/register.jpg" border="0"  alt="Register" /></td>
@@ -63,8 +63,8 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
     <td> <img width="350px" src="./documentation/candidate.jpg" border="0"  alt="candidate" /></td>
 </tr>
 <tr>
-  <td>Profile Page</td>
-  <td>Profile Other User</td>
+  <td>Profile Pages</td>
+  <td>Profile Other User Pages</td>
 <tr>
 <td><img width="350px" src="./documentation/profile.jpg" border="0" alt="profile" /></td>
     <td> <img width="350px" src="./documentation/otheruser.jpg" border="0"  alt="otheruser" /></td>
