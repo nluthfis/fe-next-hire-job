@@ -396,19 +396,6 @@ function Edit_profile() {
     }
   };
 
-  // const handleEditAll = async (event) => {
-  //   setIsLoading(true);
-  //   try {
-  //     await handleSubmit(); // Edit profile
-  //     await handleSubmitSkills(); // Edit skills
-  //     setIsLoading(false);
-  //     router.replace("/profile");
-  //   } catch (error) {
-  //     console.error(error);
-  //     setIsLoading(false);
-  //   }
-  // };
-
   const handleEditAll = async (event) => {
     return new Promise(async (resolve, reject) => {
       setIsLoading(true);
@@ -518,15 +505,15 @@ function Edit_profile() {
                   </p>
                 </div>
               </div>
-            </div>
-            <div className="col mt-2">
-              <button
-                className="btn btn-primary w-100"
-                type="button"
-                onClick={handleEditAll}
-              >
-                {isLoading ? "Loading..." : "Simpan"}
-              </button>
+              <div className="col m-2">
+                <button
+                  className="btn btn-primary w-100"
+                  type="button"
+                  onClick={handleEditAll}
+                >
+                  {isLoading ? "Loading..." : "Simpan"}
+                </button>
+              </div>
             </div>
           </div>
           <div className="col-md-9 col-lg-9 col-xs-12 col-sm-12 bg-light">

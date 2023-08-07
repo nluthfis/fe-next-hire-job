@@ -32,11 +32,11 @@ function Register() {
 
     if (validatePasswords()) {
       try {
-        const verif = "must be between 8 and 50 characters";
+        const verif = "harus antara 8 sampai 50 karakter";
         const validationRules = {
           email: {
             required: true,
-            errorMessage: "Email is required",
+            errorMessage: "Diperlukan email",
           },
           password: {
             required: true,
@@ -48,25 +48,25 @@ function Register() {
             required: true,
             minLength: 8,
             maxLength: 50,
-            errorMessage: "Name must be between 8 and 50 characters",
+            errorMessage: `Name ${verif}`,
           },
           company: {
             required: true,
             minLength: 8,
             maxLength: 50,
-            errorMessage: "Company name must be between 8 and 50 characters",
+            errorMessage: `Company ${verif}`,
           },
           job_title: {
             required: true,
             minLength: 8,
             maxLength: 50,
-            errorMessage: "Job title must be between 8 and 50 characters",
+            errorMessage: `Job title ${verif}`,
           },
           phone: {
             required: true,
             minLength: 8,
             maxLength: 50,
-            errorMessage: "Phone number must be between 8 and 50 characters",
+            errorMessage: `Phone number ${verif}`,
           },
         };
 
