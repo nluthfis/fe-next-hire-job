@@ -3,7 +3,7 @@
 
   <h3 align="center">HireJob Application</h3>
   <p align="center">
-    <a href="https://fe-next-hire-job.vercel.app/">View Demo</a>
+    <a href="https://hire-job-web.vercel.app/">View Demo</a>
   </p>
 </p>
 
@@ -11,20 +11,16 @@
 
 Peworld is a job-search platform based on web application build with next.js, where user can register as job seekers and looking for workers with a specific criteria needed.
 
-## Project Structure
+## Table of Contents
 
-```
-|── HIRE-JOB
-   |── components      # component items
-   |── documentation   # Screenshots of the application
-   |── pages           # Pages source code
-   |── public          # Public Assets
-   |── store           # redux configuration
-   |── styles          # Application Styling
-   |── .env            # Environment variables
-   |── .gitignore      # Files that should be ignored
-   |── README.md       # Readme
-```
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Documentation](#documentation)
+- [Related Projects](#related-projects)
+- [Authors](#authors)
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
@@ -37,7 +33,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 - Server side rendering
 - Incremental Static Regeneration
 
-## Below are lists of modules used in this application:
+## Technologies Used:
 
 - [Next.js](https://nextjs.org/)
 - [Redux](https://redux.js.org/)
@@ -78,9 +74,11 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 </tr>
 </table>
 
-## Getting Started
+## Getting Started:
 
-### Prerequisites
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites:
 
 This is an example of things you need to use the application and how to install them.
 
@@ -91,7 +89,7 @@ This is an example of things you need to use the application and how to install 
 1. Clone the repo
 
 ```sh
-git clone https://github.com/https://github.com/nluthfis/fe-next-hire-job
+git clone https://github.com/nluthfis/hire-job-web.git
 ```
 
 2. Install NPM packages
@@ -103,8 +101,7 @@ npm install
 3. Add .env file at your frontend root folder project, and add the following
 
 ```sh
-REACT_APP_BACKEND_URL = your_api_url
-
+REACT_APP_BACKEND_URL = hire-job.onrender.com
 ```
 
 - First, run the development server:
@@ -118,12 +115,18 @@ Learn More
 To learn more about Next.js, take a look at the following resources:
 Next.js Documentation - learn
 
-## Deploy on Vercel
-
-Check out https://fe-next-hire-job.vercel.app for more details.
-
 ## Related Project
 
 :rocket: [`Backend`](https://github.com/nluthfis/hire_job_be)
 
-:rocket: [`Demo`](https://fe-next-hire-job.vercel.app/)
+:rocket: [`Demo`](https://hire-job-web.vercel.app)
+
+## Authors
+
+Contributors names and contact info:
+
+1. Naufal Luthfi Saputra
+
+- [Linkedin](https://www.linkedin.com/in/naufal-luthfi-saputra/)
+
+Feel free to check out the related projects and the provided Postman documentation for the API endpoints. If you have any questions or feedback, please don't hesitate to reach out to the author. Happy coding!
