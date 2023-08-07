@@ -1,10 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { setToken } from "../store/reducers/authSlice";
-import { setUser } from "../store/reducers/userSlice";
 import { useState } from "react";
 import { loginUser } from "../store/reducers/authSlice";
 import { useEffect } from "react";
@@ -16,7 +13,6 @@ function Login() {
   const auth = useSelector((state) => state.auth);
   const status = useSelector((state) => state.auth.status);
   const messages = useSelector((state) => state.auth.messages);
-  console.log(messages);
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleLogin(event) {
@@ -64,11 +60,17 @@ function Login() {
                 menggunakan layanan kami secara maksimal
               </p>
               {messages && (
-                <div className="alert alert-danger ms-5" role="alert">
+                <div
+                  className={`alert ${
+                    messages === "Login success"
+                      ? "alert-success"
+                      : "alert-danger"
+                  } ms-5`}
+                  role="alert"
+                >
                   {messages}
                 </div>
               )}
-              {auth.status === "failed" && <div>{auth.messages}</div>}
 
               <form onSubmit={handleLogin}>
                 <div className="m-5 mt-2 mb-3">

@@ -36,7 +36,6 @@ function Job_list(props) {
 
   // server rendering code here
   const [data, setData] = useState(props?.request?.data);
-  console.log(data);
   const [currentPage, setCurrentPage] = useState(0);
   const [firstPageInSet, setFirstPageInSet] = useState(0);
   const [searchText, setSearchText] = useState("");
@@ -44,9 +43,6 @@ function Job_list(props) {
   const handleSearchInputChange = (event) => {
     setSearchText(event.target.value);
   };
-  console.log(data);
-  console.log(filteredData);
-  console.log(searchText);
 
   const handleSortOptionClick = (option) => {
     setSortOption(option);

@@ -32,6 +32,70 @@ function Register() {
 
     if (validatePasswords()) {
       try {
+        const verif = "must be between 8 and 50 characters";
+        const validationRules = {
+          email: {
+            required: true,
+            errorMessage: "Email is required",
+          },
+          password: {
+            required: true,
+            minLength: 8,
+            maxLength: 50,
+            errorMessage: `Password ${verif}`,
+          },
+          fullname: {
+            required: true,
+            minLength: 8,
+            maxLength: 50,
+            errorMessage: "Name must be between 8 and 50 characters",
+          },
+          company: {
+            required: true,
+            minLength: 8,
+            maxLength: 50,
+            errorMessage: "Company name must be between 8 and 50 characters",
+          },
+          job_title: {
+            required: true,
+            minLength: 8,
+            maxLength: 50,
+            errorMessage: "Job title must be between 8 and 50 characters",
+          },
+          phone: {
+            required: true,
+            minLength: 8,
+            maxLength: 50,
+            errorMessage: "Phone number must be between 8 and 50 characters",
+          },
+        };
+
+        let isValid = true;
+
+        Object.entries(validationRules).forEach(([field, rules]) => {
+          if (rules.required && formData[field] === "") {
+            setErrMsg(rules.errorMessage);
+            isValid = false;
+          } else if (
+            rules.minLength &&
+            formData[field].length < rules.minLength
+          ) {
+            setErrMsg(rules.errorMessage);
+            isValid = false;
+          } else if (
+            rules.maxLength &&
+            formData[field].length > rules.maxLength
+          ) {
+            setErrMsg(rules.errorMessage);
+            isValid = false;
+          }
+        });
+
+        if (!isValid) {
+          setIsLoading(false);
+          return;
+        }
+
         response = await axios.post(
           `${process.env.NEXT_PUBLIC_APP_BASE_URL}/auth/register`,
           formData
@@ -39,12 +103,16 @@ function Register() {
 
         router.push("/login");
       } catch (error) {
+        if ((error.response.message = "Request failed with status code 422")) {
+          setErrMsg("The email must be a valid email address.");
+        }
         console.error(error);
       } finally {
         setIsLoading(false);
       }
     } else {
-      setErrMsg(response?.data?.message ?? "Password tidak sama");
+      setErrMsg("Password tidak sama");
+      setIsLoading(false);
     }
   };
 
@@ -155,14 +223,7 @@ function Register() {
                     required
                   />
                 </div>
-                {errMsg ? (
-                  <div
-                    class="alert alert-danger ms-5 me-5 mt-2 mb-0"
-                    role="alert"
-                  >
-                    {errMsg}
-                  </div>
-                ) : null}
+
                 <div className="m-5 mt-0 mb-0">
                   <label htmlFor="Password" className="form-label">
                     Password
@@ -191,6 +252,14 @@ function Register() {
                     required
                   />
                 </div>
+                {errMsg && (
+                  <div
+                    className="alert alert-danger ms-5 me-5 mt-2 mb-0"
+                    role="alert"
+                  >
+                    {errMsg}
+                  </div>
+                )}
                 <div className="m-5 mt-3 mb-0 d-grid">
                   <button type="submit" className="btn btn-warning btn-lg">
                     {isLoading ? "Loading..." : "Daftar"}
