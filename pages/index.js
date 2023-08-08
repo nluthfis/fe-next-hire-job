@@ -27,7 +27,7 @@ export default function Home() {
           <div className="row">
             <div className="col-md-6 col-lg-6 col-sm-12 col-xs-12 d-flex flex-column justify-content-center order-2 order-md-1">
               <h1 className="tittle text-primary m-5">
-                Talenta terbaik negri untuk perubahan revolusi 4.0
+                Talenta Terbaik Negri untuk Perubahan Revolusi 4.0
               </h1>
               <p className="desc me-5 mb-5 ms-5">
                 Dorongan revolusi industri 4.0 mendorong kita untuk
@@ -87,7 +87,7 @@ export default function Home() {
 
               <div className="col-md-6 col-lg-6 col-sm-12 col-xs-12">
                 <h2 className="text-primary m-5 mt-5 mb-4">
-                  Kenapa harus mencari tallent di Peworld
+                  Kenapa Harus Mencari Tallent di Peworld
                 </h2>
                 {list.map((item, key) => (
                   <div className="d-flex align-items-center mt-0" key={key}>
